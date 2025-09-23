@@ -1,0 +1,19 @@
+@import "tailwindcss";
+
+@theme {
+  --max-w-2xl: 1400px;
+  --max-w-custom-1200: 1200px;
+  --max-w-custom-900: 900px;
+
+  /* 🎯 Màu chủ đạo cho furniture store */
+  --color-primary: #8B5E3C;       /* Nâu gỗ ấm - chính */
+  --color-primary-dark: #5C3A21;  /* Nâu đậm - hover, header */
+  --color-primary-light: #EADBC8; /* Be sáng - background */
+
+  /* 📝 Màu chữ */
+  --color-text-dark: #2C2C2C;     /* Xám đen - body text */
+  --color-text-light: #6B6B6B;    /* Xám nhạt - mô tả */
+
+  /* 🌿 Màu nền phụ */
+  --color-extra-light: #F5F3EF;   /* Be rất nhạt - background section */
+}

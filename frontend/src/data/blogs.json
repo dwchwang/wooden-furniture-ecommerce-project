@@ -1,0 +1,30 @@
+[
+  {
+    "id": 1,
+    "title": "Tạo Không Gian Sống Đẳng Cấp Với Nội Thất Gỗ Sồi",
+    "subtitle": "Xu Hướng Thiết Kế 2023",
+    "date": "12th August 2023",
+    "imageUrl": "https://images.unsplash.com/photo-1635621221497-d68ad40d7be9?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+  },
+  {
+    "id": 2,
+    "title": "5 Ý Tưởng Trang Trí Nhà Bằng Đồ Gỗ Tự Nhiên",
+    "subtitle": "Ấm Cúng & Sang Trọng",
+    "date": "18th January 2024",
+    "imageUrl": "https://images.unsplash.com/photo-1650676362924-aeed40b9a30d?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+  },
+  {
+    "id": 3,
+    "title": "Bí Quyết Bảo Quản Nội Thất Gỗ Luôn Như Mới",
+    "subtitle": "Chia Sẻ Từ Chuyên Gia",
+    "date": "5th January 2025",
+    "imageUrl": "https://images.unsplash.com/photo-1721989516956-a9b06801038f?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+  },
+  {
+    "id": 4,
+    "title": "Khám Phá Hội Chợ Nội Thất Gỗ Lớn Nhất 2025",
+    "subtitle": "Wooden Furniture Expo",
+    "date": "25th May 2025",
+    "imageUrl": "https://images.unsplash.com/photo-1599651993975-30a482e26467?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+  }
+]
