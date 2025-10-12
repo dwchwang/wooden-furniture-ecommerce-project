@@ -7,7 +7,7 @@
     "price": "12.000.000",
     "oldPrice": "14.500.000",
     "image": "https://noithatmk11.com/wp-content/uploads/2022/07/z2629250971191_f206aa353c30d69e0b6c7fa669f1dbb2.jpg",
-    "color": "natural oak",
+    "type": "Table",
     "rating": 4.7,
     "author": "admin"
   },
@@ -19,7 +19,7 @@
     "price": "6.000.000",
     "oldPrice": "7.500.000",
     "image": "https://noithattamviet.net/public/images/products/ghe-sofa-don-sd-05-1727661503.jpg",
-    "color": "walnut",
+    "type": "Chair",
     "rating": 4.5
   },
   {
@@ -29,7 +29,7 @@
     "description": "Minimalist pine coffee table with natural finish, perfect for living rooms.",
     "price": "3.500.000",
     "image": "https://pula.vn/storage/images/2022/04/14/ban-tra-pula-bt22.webp",
-    "color": "light pine",
+    "type": "Table",
     "rating": 4.3
   },
   {
@@ -39,7 +39,7 @@
     "description": "Elegant mahogany bookshelf with 5 spacious tiers for storage.",
     "price": "8.500.000",
     "image": "https://api.togihome.vn/storage/images/originals/ke-sach-go-tu-nhien-thiet-ke-hien-dai-sd39-1-cqfiboeehtwgzgn.webp",
-    "color": "mahogany",
+    "type": "Bookshelf",
     "rating": 4.6
   },
   {
@@ -50,7 +50,7 @@
     "price": "18.000.000",
     "oldPrice": "20.000.000",
     "image": "https://api.khanhconcept.vn/storage/images/originals/giuong-go-tu-nhien-thiet-ke-ket-cau-chac-chan-khanhconcept-tqa120-1-piqdruqgaxs9tde.webp",
-    "color": "rustic brown",
+    "type": "Bed",
     "rating": 4.8
   },
   {
@@ -60,7 +60,7 @@
     "description": "Modern teak wood TV stand with drawers and open shelves.",
     "price": "9.500.000",
     "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQyBCrozLQe7ef5aNwiIFXWu6G58gn-YRFs8g&s",
-    "color": "teak",
+    "type": "Cabinet",
     "rating": 4.4
   },
   {
@@ -71,7 +71,7 @@
     "price": "22.000.000",
     "oldPrice": "25.000.000",
     "image": "https://noithathuykhanh.com/wp-content/uploads/2020/03/tu-nhua-quan-ao-nguoi-lon-2-canh-tp-tnnl-06-6.jpg",
-    "color": "cherry wood",
+    "type": "Wardrobe",
     "rating": 4.7
   },
   {
@@ -81,7 +81,7 @@
     "description": "Compact maple nightstand with drawer and open storage space.",
     "price": "2.800.000",
     "image": "https://api.sconcept.vn/storage/images/originals/tu-dau-giuong-go-tu-nhien-sophia-concept-hien-dai-bs01-1-6pwapopn6annmok.webp",
-    "color": "maple",
+    "type": "Cabinet",
     "rating": 4.2
   },
   {
@@ -91,7 +91,7 @@
     "description": "Classic wooden rocking chair with ergonomic design for comfort.",
     "price": "6.500.000",
     "image": "https://furaka.vn/wp-content/uploads/2023/03/Ghe-thu-gian-Furaka.jpg",
-    "color": "dark oak",
+    "type": "Chair",
     "rating": 4.6
   },
   {
@@ -102,7 +102,7 @@
     "price": "2.000.000",
     "oldPrice": "2.500.000",
     "image": "https://www.islandliving.sg/cdn/shop/products/BambooShoerack1.jpg?v=1662703726",
-    "color": "bamboo",
+    "type": "Cabinet",
     "rating": 4.1
   }
 ]
