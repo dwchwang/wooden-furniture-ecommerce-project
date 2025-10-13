@@ -7,7 +7,7 @@ const OrderSummary = () => {
   const clearCartItem = () => {
     dispatch(clearCart());
   };
-  const products = useSelector((store) => store.cart.products);
+  // const products = useSelector((store) => store.cart.products);
   const { tax, taxRate, totalPrice, grandTotal, selectedItems } = useSelector(
     (store) => store.cart
   );
