@@ -1,0 +1,967 @@
+# 📮 Complete API Reference - Postman Testing Guide
+
+**Base URL:** `http://localhost:8000`
+
+---
+
+## 🔧 Setup Instructions
+
+### 1. Import to Postman
+- Copy JSON collection ở cuối file này
+- Postman → Import → Raw text → Paste JSON
+
+### 2. Set Environment Variables
+```
+baseUrl = http://localhost:8000
+accessToken = (will be set after login)
+userId = (will be set after login)
+```
+
+---
+
+## 📋 All API Endpoints (60+)
+
+---
+
+## 1️⃣ USERS & AUTHENTICATION (6 endpoints)
+
+### 1.1 Register User
+```
+POST {{baseUrl}}/api/v1/users/register
+```
+**Body (JSON):**
+```json
+{
+  "fullName": "Nguyen Van A",
+  "email": "nguyenvana@example.com",
+  "password": "123456",
+  "phone": "0987654321"
+}
+```
+**Response:** Returns user + accessToken + refreshToken
+
+---
+
+### 1.2 Login
+```
+POST {{baseUrl}}/api/v1/users/login
+```
+**Body (JSON):**
+```json
+{
+  "email": "nguyenvana@example.com",
+  "password": "123456"
+}
+```
+**Response:** Returns user + tokens
+**Note:** Save accessToken to environment variable
+
+---
+
+### 1.3 Logout
+```
+POST {{baseUrl}}/api/v1/users/logout
+Headers: Authorization: Bearer {{accessToken}}
+```
+**Body:** None
+
+---
+
+### 1.4 Get Current User
+```
+GET {{baseUrl}}/api/v1/users/me
+Headers: Authorization: Bearer {{accessToken}}
+```
+
+---
+
+### 1.5 Update Profile
+```
+PATCH {{baseUrl}}/api/v1/users/update-profile
+Headers: Authorization: Bearer {{accessToken}}
+```
+**Body (JSON):**
+```json
+{
+  "fullName": "Nguyen Van A Updated",
+  "phone": "0912345678",
+  "avatar": "https://example.com/avatar.jpg",
+  "address": [
+    {
+      "street": "123 Nguyen Hue",
+      "ward": "Ben Nghe",
+      "district": "Quan 1",
+      "city": "Ho Chi Minh",
+      "isDefault": true
+    }
+  ]
+}
+```
+
+---
+
+### 1.6 Change Password
+```
+PATCH {{baseUrl}}/api/v1/users/change-password
+Headers: Authorization: Bearer {{accessToken}}
+```
+**Body (JSON):**
+```json
+{
+  "currentPassword": "123456",
+  "newPassword": "newpassword123"
+}
+```
+
+---
+
+## 2️⃣ CATEGORIES (7 endpoints)
+
+### 2.1 Get All Categories
+```
+GET {{baseUrl}}/api/v1/categories
+```
+**Query params (optional):**
+- `isActive=true`
+
+---
+
+### 2.2 Get Category Tree
+```
+GET {{baseUrl}}/api/v1/categories/tree
+```
+
+---
+
+### 2.3 Get Category by ID
+```
+GET {{baseUrl}}/api/v1/categories/:id
+```
+Example: `/api/v1/categories/507f1f77bcf86cd799439011`
+
+---
+
+### 2.4 Get Category by Slug
+```
+GET {{baseUrl}}/api/v1/categories/slug/:slug
+```
+Example: `/api/v1/categories/slug/ban-ghe`
+
+---
+
+### 2.5 Create Category (Admin)
+```
+POST {{baseUrl}}/api/v1/categories
+Headers: Authorization: Bearer {{accessToken}}
+```
+**Body (JSON):**
+```json
+{
+  "name": "Bàn Ghế",
+  "description": "Các loại bàn ghế gỗ cao cấp",
+  "parent": null,
+  "image": "https://example.com/category.jpg",
+  "isActive": true
+}
+```
+
+---
+
+### 2.6 Update Category (Admin)
+```
+PATCH {{baseUrl}}/api/v1/categories/:id
+Headers: Authorization: Bearer {{accessToken}}
+```
+**Body (JSON):**
+```json
+{
+  "name": "Bàn Ghế Updated",
+  "description": "Updated description",
+  "isActive": true
+}
+```
+
+---
+
+### 2.7 Delete Category (Admin)
+```
+DELETE {{baseUrl}}/api/v1/categories/:id
+Headers: Authorization: Bearer {{accessToken}}
+```
+
+---
+
+## 3️⃣ PRODUCTS (8 endpoints)
+
+### 3.1 Get All Products
+```
+GET {{baseUrl}}/api/v1/products
+```
+**Query params (optional):**
+- `page=1`
+- `limit=10`
+- `category=507f1f77bcf86cd799439011`
+- `minPrice=100000`
+- `maxPrice=5000000`
+- `material=go-soi`
+- `isActive=true`
+- `isFeatured=true`
+- `sort=createdAt` (or `price`, `-price`, `-createdAt`)
+
+---
+
+### 3.2 Get Featured Products
+```
+GET {{baseUrl}}/api/v1/products/featured
+```
+
+---
+
+### 3.3 Search Products
+```
+GET {{baseUrl}}/api/v1/products/search?q=ban
+```
+
+---
+
+### 3.4 Get Product by ID
+```
+GET {{baseUrl}}/api/v1/products/:id
+```
+
+---
+
+### 3.5 Get Product by Slug
+```
+GET {{baseUrl}}/api/v1/products/slug/:slug
+```
+Example: `/api/v1/products/slug/ban-an-go-soi`
+
+---
+
+### 3.6 Create Product (Admin)
+```
+POST {{baseUrl}}/api/v1/products
+Headers: Authorization: Bearer {{accessToken}}
+```
+**Body (JSON):**
+```json
+{
+  "name": "Bàn Ăn Gỗ Sồi",
+  "description": "Bàn ăn gỗ sồi cao cấp, thiết kế hiện đại",
+  "category": "507f1f77bcf86cd799439011",
+  "material": "Gỗ Sồi",
+  "dimensions": {
+    "length": 180,
+    "width": 90,
+    "height": 75
+  },
+  "weight": 50,
+  "images": [
+    "https://example.com/product1.jpg",
+    "https://example.com/product2.jpg"
+  ],
+  "basePrice": 5000000,
+  "isActive": true,
+  "isFeatured": true,
+  "variants": [
+    {
+      "color": "Nâu",
+      "size": "180x90x75",
+      "price": 5000000,
+      "stock": 10,
+      "images": ["https://example.com/variant1.jpg"]
+    },
+    {
+      "color": "Đen",
+      "size": "180x90x75",
+      "price": 5500000,
+      "stock": 5,
+      "images": ["https://example.com/variant2.jpg"]
+    }
+  ]
+}
+```
+
+---
+
+### 3.7 Update Product (Admin)
+```
+PATCH {{baseUrl}}/api/v1/products/:id
+Headers: Authorization: Bearer {{accessToken}}
+```
+**Body (JSON):**
+```json
+{
+  "name": "Bàn Ăn Gỗ Sồi Updated",
+  "basePrice": 5500000,
+  "isFeatured": false
+}
+```
+
+---
+
+### 3.8 Delete Product (Admin)
+```
+DELETE {{baseUrl}}/api/v1/products/:id
+Headers: Authorization: Bearer {{accessToken}}
+```
+
+---
+
+## 4️⃣ PRODUCT VARIANTS (7 endpoints)
+
+### 4.1 Get Product Variants
+```
+GET {{baseUrl}}/api/v1/products/:productId/variants
+```
+**Query params (optional):**
+- `isActive=true`
+
+---
+
+### 4.2 Get Variant by ID
+```
+GET {{baseUrl}}/api/v1/products/variants/:variantId
+```
+
+---
+
+### 4.3 Check Stock
+```
+GET {{baseUrl}}/api/v1/products/variants/:variantId/check-stock?quantity=2
+```
+
+---
+
+### 4.4 Create Variant (Admin)
+```
+POST {{baseUrl}}/api/v1/products/:productId/variants
+Headers: Authorization: Bearer {{accessToken}}
+```
+**Body (JSON):**
+```json
+{
+  "sku": "BAN-SOI-NAU-180",
+  "color": "Nâu",
+  "size": "180x90x75",
+  "price": 5000000,
+  "stock": 10,
+  "images": ["https://example.com/variant.jpg"],
+  "isActive": true
+}
+```
+
+---
+
+### 4.5 Update Variant (Admin)
+```
+PATCH {{baseUrl}}/api/v1/products/variants/:variantId
+Headers: Authorization: Bearer {{accessToken}}
+```
+**Body (JSON):**
+```json
+{
+  "price": 5200000,
+  "stock": 15
+}
+```
+
+---
+
+### 4.6 Update Stock (Admin)
+```
+PATCH {{baseUrl}}/api/v1/products/variants/:variantId/stock
+Headers: Authorization: Bearer {{accessToken}}
+```
+**Body (JSON):**
+```json
+{
+  "quantity": 5,
+  "operation": "increase"
+}
+```
+**operation:** `increase` or `decrease`
+
+---
+
+### 4.7 Delete Variant (Admin)
+```
+DELETE {{baseUrl}}/api/v1/products/variants/:variantId
+Headers: Authorization: Bearer {{accessToken}}
+```
+
+---
+
+## 5️⃣ VOUCHERS (7 endpoints)
+
+### 5.1 Get Active Vouchers
+```
+GET {{baseUrl}}/api/v1/vouchers/active
+```
+
+---
+
+### 5.2 Validate Voucher
+```
+POST {{baseUrl}}/api/v1/vouchers/validate
+```
+**Body (JSON):**
+```json
+{
+  "code": "SUMMER2024",
+  "orderValue": 1000000
+}
+```
+
+---
+
+### 5.3 Get All Vouchers (Admin)
+```
+GET {{baseUrl}}/api/v1/vouchers
+Headers: Authorization: Bearer {{accessToken}}
+```
+**Query params (optional):**
+- `page=1`
+- `limit=20`
+- `isActive=true`
+
+---
+
+### 5.4 Get Voucher by ID (Admin)
+```
+GET {{baseUrl}}/api/v1/vouchers/:id
+Headers: Authorization: Bearer {{accessToken}}
+```
+
+---
+
+### 5.5 Create Voucher (Admin)
+```
+POST {{baseUrl}}/api/v1/vouchers
+Headers: Authorization: Bearer {{accessToken}}
+```
+**Body (JSON):**
+```json
+{
+  "code": "SUMMER2024",
+  "description": "Giảm giá mùa hè",
+  "discountType": "percentage",
+  "discountValue": 20,
+  "minOrderValue": 500000,
+  "maxDiscountAmount": 200000,
+  "usageLimit": 100,
+  "startDate": "2024-06-01T00:00:00.000Z",
+  "endDate": "2024-08-31T23:59:59.999Z",
+  "isActive": true
+}
+```
+**discountType:** `percentage` or `fixed`
+
+---
+
+### 5.6 Update Voucher (Admin)
+```
+PATCH {{baseUrl}}/api/v1/vouchers/:id
+Headers: Authorization: Bearer {{accessToken}}
+```
+**Body (JSON):**
+```json
+{
+  "discountValue": 25,
+  "usageLimit": 150
+}
+```
+
+---
+
+### 5.7 Delete Voucher (Admin)
+```
+DELETE {{baseUrl}}/api/v1/vouchers/:id
+Headers: Authorization: Bearer {{accessToken}}
+```
+
+---
+
+## 6️⃣ ORDERS (7 endpoints)
+
+### 6.1 Create Order
+```
+POST {{baseUrl}}/api/v1/orders
+Headers: Authorization: Bearer {{accessToken}}
+```
+**Body (JSON):**
+```json
+{
+  "items": [
+    {
+      "variant": "507f1f77bcf86cd799439011",
+      "quantity": 2
+    },
+    {
+      "variant": "507f1f77bcf86cd799439012",
+      "quantity": 1
+    }
+  ],
+  "shippingAddress": {
+    "fullName": "Nguyen Van A",
+    "phone": "0987654321",
+    "street": "123 Nguyen Hue",
+    "ward": "Ben Nghe",
+    "district": "Quan 1",
+    "city": "Ho Chi Minh"
+  },
+  "voucherCode": "SUMMER2024",
+  "shippingFee": 30000,
+  "paymentMethod": "COD",
+  "notes": "Giao hàng giờ hành chính"
+}
+```
+**paymentMethod:** `COD` or [VNPay](file:///Users/dwchwang/Documents/OneDrive_Backup/2025.1/DoAn2/wooden-furniture-ecommerce-project/backend/src/utils/vnpay.util.js#84-97)
+
+---
+
+### 6.2 Get My Orders
+```
+GET {{baseUrl}}/api/v1/orders/my-orders
+Headers: Authorization: Bearer {{accessToken}}
+```
+**Query params (optional):**
+- `page=1`
+- `limit=10`
+- `status=pending` (pending/processing/shipping/delivered/cancelled)
+
+---
+
+### 6.3 Get Order by ID
+```
+GET {{baseUrl}}/api/v1/orders/:id
+Headers: Authorization: Bearer {{accessToken}}
+```
+
+---
+
+### 6.4 Cancel Order
+```
+PATCH {{baseUrl}}/api/v1/orders/:id/cancel
+Headers: Authorization: Bearer {{accessToken}}
+```
+
+---
+
+### 6.5 Get All Orders (Admin)
+```
+GET {{baseUrl}}/api/v1/orders
+Headers: Authorization: Bearer {{accessToken}}
+```
+**Query params (optional):**
+- `page=1`
+- `limit=20`
+- `orderStatus=pending`
+- `paymentStatus=paid`
+- `paymentMethod=VNPay`
+
+---
+
+### 6.6 Update Order Status (Admin)
+```
+PATCH {{baseUrl}}/api/v1/orders/:id/status
+Headers: Authorization: Bearer {{accessToken}}
+```
+**Body (JSON):**
+```json
+{
+  "orderStatus": "processing",
+  "paymentStatus": "paid"
+}
+```
+**orderStatus:** `pending`, `processing`, `shipping`, `delivered`, `cancelled`
+**paymentStatus:** `pending`, `paid`, `failed`
+
+---
+
+### 6.7 Get Order Statistics (Admin)
+```
+GET {{baseUrl}}/api/v1/orders/stats/overview
+Headers: Authorization: Bearer {{accessToken}}
+```
+**Query params (optional):**
+- `startDate=2024-01-01`
+- `endDate=2024-12-31`
+
+---
+
+## 7️⃣ REVIEWS (5 endpoints)
+
+### 7.1 Get Product Reviews
+```
+GET {{baseUrl}}/api/v1/reviews/product/:productId
+```
+**Query params (optional):**
+- `page=1`
+- `limit=10`
+- `rating=5` (1-5)
+
+---
+
+### 7.2 Check Can Review
+```
+GET {{baseUrl}}/api/v1/reviews/can-review/:productId
+Headers: Authorization: Bearer {{accessToken}}
+```
+
+---
+
+### 7.3 Create Review
+```
+POST {{baseUrl}}/api/v1/reviews
+Headers: Authorization: Bearer {{accessToken}}
+```
+**Body (JSON):**
+```json
+{
+  "product": "507f1f77bcf86cd799439011",
+  "order": "507f1f77bcf86cd799439012",
+  "rating": 5,
+  "comment": "Sản phẩm rất tốt, chất lượng cao",
+  "images": [
+    "https://example.com/review1.jpg",
+    "https://example.com/review2.jpg"
+  ]
+}
+```
+
+---
+
+### 7.4 Update Review
+```
+PATCH {{baseUrl}}/api/v1/reviews/:id
+Headers: Authorization: Bearer {{accessToken}}
+```
+**Body (JSON):**
+```json
+{
+  "rating": 4,
+  "comment": "Updated review"
+}
+```
+
+---
+
+### 7.5 Delete Review
+```
+DELETE {{baseUrl}}/api/v1/reviews/:id
+Headers: Authorization: Bearer {{accessToken}}
+```
+
+---
+
+## 8️⃣ MESSAGES (5 endpoints)
+
+### 8.1 Send Message
+```
+POST {{baseUrl}}/api/v1/messages
+Headers: Authorization: Bearer {{accessToken}}
+```
+**Body (JSON):**
+```json
+{
+  "receiver": null,
+  "content": "Xin chào, tôi cần hỗ trợ về sản phẩm"
+}
+```
+**receiver:** User ID or `null` for admin
+
+---
+
+### 8.2 Get All Conversations
+```
+GET {{baseUrl}}/api/v1/messages/conversations
+Headers: Authorization: Bearer {{accessToken}}
+```
+
+---
+
+### 8.3 Get Conversation with User
+```
+GET {{baseUrl}}/api/v1/messages/conversation/:userId
+Headers: Authorization: Bearer {{accessToken}}
+```
+**Query params (optional):**
+- `page=1`
+- `limit=50`
+
+---
+
+### 8.4 Get Unread Count
+```
+GET {{baseUrl}}/api/v1/messages/unread-count
+Headers: Authorization: Bearer {{accessToken}}
+```
+
+---
+
+### 8.5 Mark as Read
+```
+PATCH {{baseUrl}}/api/v1/messages/:id/read
+Headers: Authorization: Bearer {{accessToken}}
+```
+
+---
+
+## 9️⃣ UPLOAD (3 endpoints)
+
+### 9.1 Upload Single Image
+```
+POST {{baseUrl}}/api/v1/upload/image
+Headers: Authorization: Bearer {{accessToken}}
+Content-Type: multipart/form-data
+```
+**Body (form-data):**
+- `image`: [Select File]
+
+---
+
+### 9.2 Upload Multiple Images
+```
+POST {{baseUrl}}/api/v1/upload/images
+Headers: Authorization: Bearer {{accessToken}}
+Content-Type: multipart/form-data
+```
+**Body (form-data):**
+- `images`: [Select Multiple Files] (max 10)
+
+---
+
+### 9.3 Delete Image
+```
+DELETE {{baseUrl}}/api/v1/upload/image/:publicId
+Headers: Authorization: Bearer {{accessToken}}
+```
+Example: `/api/v1/upload/image/furniture-ecommerce/abc123`
+
+---
+
+## 🔟 PAYMENT (4 endpoints)
+
+### 10.1 Create VNPay Payment
+```
+POST {{baseUrl}}/api/v1/payment/vnpay/create
+Headers: Authorization: Bearer {{accessToken}}
+```
+**Body (JSON):**
+```json
+{
+  "orderId": "507f1f77bcf86cd799439011"
+}
+```
+**Response:** Returns `paymentUrl` to redirect user
+
+---
+
+### 10.2 VNPay Return URL
+```
+GET {{baseUrl}}/api/v1/payment/vnpay/return?vnp_Amount=...&vnp_TxnRef=...
+```
+**Note:** This is called by VNPay, not by you
+
+---
+
+### 10.3 VNPay IPN
+```
+GET {{baseUrl}}/api/v1/payment/vnpay/ipn?vnp_Amount=...&vnp_TxnRef=...
+```
+**Note:** This is called by VNPay server
+
+---
+
+### 10.4 Check Payment Status
+```
+GET {{baseUrl}}/api/v1/payment/status/:orderId
+Headers: Authorization: Bearer {{accessToken}}
+```
+
+---
+
+## 📦 Postman Collection JSON
+
+```json
+{
+  "info": {
+    "name": "Furniture E-commerce API",
+    "description": "Complete API collection for furniture e-commerce backend",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8000",
+      "type": "string"
+    },
+    {
+      "key": "accessToken",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "1. Auth & Users",
+      "item": [
+        {
+          "name": "Register",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    const response = pm.response.json();",
+                  "    pm.environment.set('accessToken', response.data.accessToken);",
+                  "    pm.environment.set('userId', response.data.user._id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "url": "{{baseUrl}}/api/v1/users/register",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fullName\": \"Test User\",\n  \"email\": \"test@example.com\",\n  \"password\": \"123456\",\n  \"phone\": \"0987654321\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const response = pm.response.json();",
+                  "    pm.environment.set('accessToken', response.data.accessToken);",
+                  "    pm.environment.set('userId', response.data.user._id);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "url": "{{baseUrl}}/api/v1/users/login",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"test@example.com\",\n  \"password\": \"123456\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Get Current User",
+          "request": {
+            "method": "GET",
+            "header": [{"key": "Authorization", "value": "Bearer {{accessToken}}"}],
+            "url": "{{baseUrl}}/api/v1/users/me"
+          }
+        }
+      ]
+    },
+    {
+      "name": "2. Categories",
+      "item": [
+        {
+          "name": "Get All Categories",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/v1/categories"
+          }
+        },
+        {
+          "name": "Create Category",
+          "request": {
+            "method": "POST",
+            "header": [
+              {"key": "Content-Type", "value": "application/json"},
+              {"key": "Authorization", "value": "Bearer {{accessToken}}"}
+            ],
+            "url": "{{baseUrl}}/api/v1/categories",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Bàn Ghế\",\n  \"description\": \"Các loại bàn ghế gỗ\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "3. Products",
+      "item": [
+        {
+          "name": "Get All Products",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/v1/products"
+          }
+        },
+        {
+          "name": "Create Product",
+          "request": {
+            "method": "POST",
+            "header": [
+              {"key": "Content-Type", "value": "application/json"},
+              {"key": "Authorization", "value": "Bearer {{accessToken}}"}
+            ],
+            "url": "{{baseUrl}}/api/v1/products",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Bàn Ăn Gỗ Sồi\",\n  \"description\": \"Bàn ăn cao cấp\",\n  \"category\": \"CATEGORY_ID_HERE\",\n  \"material\": \"Gỗ Sồi\",\n  \"basePrice\": 5000000\n}"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
+```
+
+---
+
+## 🎯 Testing Flow
+
+### Step 1: Authentication
+1. Register → Save accessToken
+2. Login → Update accessToken if needed
+
+### Step 2: Create Data (Admin)
+1. Create Categories
+2. Create Products with Variants
+3. Create Vouchers
+
+### Step 3: Customer Flow
+1. Browse Products
+2. Create Order
+3. (Optional) Create VNPay Payment
+4. After delivery → Create Review
+
+### Step 4: Test Integrations
+1. Upload Images
+2. Send Messages
+3. Check Payment Status
+
+---
+
+## 💡 Tips
+
+1. **Save Tokens:** Use Postman Tests tab to auto-save tokens
+2. **Use Variables:** Replace IDs with `{{variableName}}`
+3. **Test Order:** Follow the flow above
+4. **Admin User:** Create admin by updating role in MongoDB
+
+---
+
+**Total Endpoints:** 60+  
+**Ready to Test!** 🚀
