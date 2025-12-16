@@ -6,13 +6,55 @@ const ShopFiltering = ({
   setFiltersState,
   clearFilter,
 }) => {
-  return (
-    <div className="space-y-5 flex-shrink-0">
-      <h3>Filters</h3>
+  const handleCategoryChange = (categoryName) => {
+    if (categoryName === "All") {
+      setFiltersState({ ...filtersState, category: "" });
+    } else {
+      // Find category ID by name
+      const category = filters.categories.find((cat) => cat === categoryName);
+      setFiltersState({ ...filtersState, category: categoryName });
+    }
+  };
 
-      {/* category */}
+  const handlePriceChange = (range) => {
+    if (range.label === "All") {
+      setFiltersState({ ...filtersState, minPrice: "", maxPrice: "" });
+    } else {
+      setFiltersState({
+        ...filtersState,
+        minPrice: range.min,
+        maxPrice: range.max || "",
+      });
+    }
+  };
+
+  const handleMaterialChange = (material) => {
+    if (material === "All") {
+      setFiltersState({ ...filtersState, material: "" });
+    } else {
+      setFiltersState({ ...filtersState, material });
+    }
+  };
+
+  const handleTypeChange = (type) => {
+    if (type === "All") {
+      setFiltersState({ ...filtersState, type: "" });
+    } else {
+      setFiltersState({ ...filtersState, type });
+    }
+  };
+
+  const handleSortChange = (sortValue) => {
+    setFiltersState({ ...filtersState, sort: sortValue });
+  };
+
+  return (
+    <div className="space-y-5 flex-shrink-0 w-full md:w-64">
+      <h3 className="text-xl font-semibold">Filters</h3>
+
+      {/* Category - Phòng */}
       <div className="flex flex-col space-y-2">
-        <h4 className="font-medium text-lg">Category</h4>
+        <h4 className="font-medium text-lg">Phòng</h4>
         <hr />
         {filters.categories.map((category) => (
           <label key={category} className="capitalize cursor-pointer">
@@ -20,63 +62,111 @@ const ShopFiltering = ({
               type="radio"
               name="category"
               value={category}
-              id="category"
-              checked={filtersState.category === category}
-              onChange={(e) =>
-                setFiltersState({ ...filtersState, category: e.target.value })
+              checked={
+                category === "All"
+                  ? !filtersState.category
+                  : filtersState.category === category
               }
+              onChange={() => handleCategoryChange(category)}
             />
             <span className="ml-1">{category}</span>
           </label>
         ))}
       </div>
 
-      {/* types */}
-      <div className="flex flex-col space-y-2">
-        <h4 className="font-medium text-lg">Types</h4>
-        <hr />
-        {filters.types.map((type) => (
-          <label key={type} className="capitalize cursor-pointer">
-            <input
-              type="radio"
-              name="type"
-              value={type}
-              id="type"
-              checked={filtersState.type === type}
-              onChange={(e) =>
-                setFiltersState({ ...filtersState, type: e.target.value })
-              }
-            />
-            <span className="ml-1">{type}</span>
-          </label>
-        ))}
-      </div>
+      {/* Type - Loại Đồ */}
+      {filters.types && (
+        <div className="flex flex-col space-y-2">
+          <h4 className="font-medium text-lg">Loại Đồ</h4>
+          <hr />
+          {filters.types.map((type) => (
+            <label key={type} className="capitalize cursor-pointer">
+              <input
+                type="radio"
+                name="type"
+                value={type}
+                checked={
+                  type === "All"
+                    ? !filtersState.type
+                    : filtersState.type === type
+                }
+                onChange={() => handleTypeChange(type)}
+              />
+              <span className="ml-1">{type}</span>
+            </label>
+          ))}
+        </div>
+      )}
 
-      {/* pricing */}
+      {/* Material */}
+      {filters.materials && (
+        <div className="flex flex-col space-y-2">
+          <h4 className="font-medium text-lg">Material</h4>
+          <hr />
+          {filters.materials.map((material) => (
+            <label key={material} className="capitalize cursor-pointer">
+              <input
+                type="radio"
+                name="material"
+                value={material}
+                checked={
+                  material === "All"
+                    ? !filtersState.material
+                    : filtersState.material === material
+                }
+                onChange={() => handleMaterialChange(material)}
+              />
+              <span className="ml-1">{material}</span>
+            </label>
+          ))}
+        </div>
+      )}
+
+      {/* Price Range */}
       <div className="flex flex-col space-y-2">
-        <h4 className="font-medium text-lg">Price Ranges</h4>
+        <h4 className="font-medium text-lg">Price Range</h4>
         <hr />
         {filters.priceRanges.map((range) => (
           <label key={range.label} className="capitalize cursor-pointer">
             <input
               type="radio"
               name="priceRange"
-              id="priceRange"
-              value={`${range.min}-${range.max}`}
-              checked={filtersState.priceRange === `${range.min}-${range.max}`}
-              onChange={(e) =>
-                setFiltersState({ ...filtersState, priceRange: e.target.value })
+              checked={
+                range.label === "All"
+                  ? !filtersState.minPrice && !filtersState.maxPrice
+                  : filtersState.minPrice === range.min &&
+                  (filtersState.maxPrice === range.max || (!filtersState.maxPrice && !range.max))
               }
+              onChange={() => handlePriceChange(range)}
             />
             <span className="ml-1">{range.label}</span>
           </label>
         ))}
       </div>
 
-      {/* clear button */}
+      {/* Sort */}
+      {filters.sortOptions && (
+        <div className="flex flex-col space-y-2">
+          <h4 className="font-medium text-lg">Sort By</h4>
+          <hr />
+          <select
+            value={filtersState.sort}
+            onChange={(e) => handleSortChange(e.target.value)}
+            className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#a67c52]"
+          >
+            {filters.sortOptions.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+        </div>
+      )}
+
+      {/* Clear button */}
       <button
         onClick={clearFilter}
-        className="bg-primary py-1 px-4 text-white rounded-lg"
+        className="w-full bg-[#a67c52] py-2 px-4 text-white rounded-lg hover:bg-[#8b653d] transition-colors"
       >
         Clear All Filters
       </button>

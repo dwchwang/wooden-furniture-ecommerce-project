@@ -2,12 +2,23 @@ import Order from "../models/order.model.js";
 import { asyncHandler } from "../utils/async-handler.js";
 import { ApiError } from "../utils/api-error.js";
 import { ApiResponse } from "../utils/api-response.js";
-import {
-  createPaymentUrl,
-  verifyReturnUrl,
-  parseVNPayResponse,
-  getResponseMessage,
-} from "../utils/vnpay.util.js";
+import { VNPay, ProductCode, VnpLocale } from "vnpay";
+
+// Helper function to get VNPay instance
+const getVNPayInstance = () => {
+  // Validate VNPay credentials
+  if (!process.env.VNPAY_TMN_CODE || !process.env.VNPAY_HASH_SECRET) {
+    throw new ApiError(500, "VNPay credentials are missing in environment variables");
+  }
+
+  return new VNPay({
+    tmnCode: process.env.VNPAY_TMN_CODE,
+    secureSecret: process.env.VNPAY_HASH_SECRET,
+    vnpayHost: process.env.VNPAY_URL || "https://sandbox.vnpayment.vn",
+    testMode: true,
+    hashAlgorithm: "SHA512",
+  });
+};
 
 // Create VNPay payment
 const createVNPayPayment = asyncHandler(async (req, res) => {
@@ -39,20 +50,34 @@ const createVNPayPayment = asyncHandler(async (req, res) => {
   }
 
   // Get client IP
-  const ipAddr =
+  let ipAddr =
     req.headers["x-forwarded-for"] ||
     req.connection.remoteAddress ||
     req.socket.remoteAddress ||
     "127.0.0.1";
+  
+  // Convert IPv6 localhost to IPv4
+  if (ipAddr === "::1" || ipAddr === "::ffff:127.0.0.1") {
+    ipAddr = "127.0.0.1";
+  }
 
-  // Create payment URL
-  const orderInfo = `Thanh toan don hang ${order.orderNumber}`;
-  const paymentUrl = createPaymentUrl(
-    order.orderNumber,
-    order.total,
-    orderInfo,
-    ipAddr
-  );
+  // Get VNPay instance
+  const vnpay = getVNPayInstance();
+
+  // Create payment URL using vnpay package
+  const returnUrl = `http://localhost:8000/api/v1/payments/vnpay/return`;
+  
+  const paymentUrl = vnpay.buildPaymentUrl({
+    vnp_Amount: order.total,
+    vnp_IpAddr: ipAddr,
+    vnp_TxnRef: order.orderNumber,
+    vnp_OrderInfo: `Thanh toan don hang ${order.orderNumber}`,
+    vnp_OrderType: ProductCode.Other,
+    vnp_ReturnUrl: returnUrl,
+    vnp_Locale: VnpLocale.VN,
+  });
+
+  console.log("VNPay payment URL created:", paymentUrl);
 
   return res
     .status(200)
@@ -91,7 +116,7 @@ const vnpayReturn = asyncHandler(async (req, res) => {
 
     // Redirect to success page (frontend will handle this)
     return res.redirect(
-      `${process.env.FRONTEND_URL}/payment/success?orderId=${order._id}&transactionNo=${paymentData.transactionNo}`
+      `http://localhost:5173/payment/success?orderId=${order._id}&transactionNo=${paymentData.transactionNo}`
     );
   } else {
     // Payment failed
@@ -100,7 +125,7 @@ const vnpayReturn = asyncHandler(async (req, res) => {
 
     // Redirect to failure page
     return res.redirect(
-      `${process.env.FRONTEND_URL}/payment/failed?orderId=${order._id}&message=${encodeURIComponent(message)}`
+      `http://localhost:5173/payment/failed?orderId=${order._id}&message=${encodeURIComponent(message)}`
     );
   }
 });

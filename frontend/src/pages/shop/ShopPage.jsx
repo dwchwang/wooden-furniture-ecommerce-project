@@ -1,101 +1,92 @@
 import React, { useEffect, useState } from "react";
-import productsData from "../../data/products.json";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchProducts } from "../../redux/features/products/productsSlice";
+import { fetchCategories } from "../../redux/features/categories/categoriesSlice";
 import ProductCards from "./ProductCards";
 import ShopFiltering from "./ShopFiltering";
 
-const categoriesMap = {
-  All: "all",
-  "Living Room": "living-room",
-  Bedroom: "bedroom",
-  "Dining Room": "dining-room",
-  "Decor & Accessories": "decor-accessories",
-  "Home Office": "home-office",
-  Outdoor: "outdoor",
-};
-
-const filters = {
-  categories: [
-    "All",
-    "Living Room",
-    "Bedroom",
-    "Dining Room",
-    "Decor & Accessories",
-    "Home Office",
-    "Outdoor",
-  ],
-  types: [
-    "All",
-    "Bed",
-    "Sofa",
-    "Chair",
-    "Table",
-    "Wardrobe",
-    "Cabinet",
-    "Bookshelf",
-  ],
-  priceRanges: [
-    { label: "Under 2.000.000 VND", min: 0, max: 2000000 },
-    { label: "2.000.000 - 5.000.000 VND", min: 2000000, max: 5000000 },
-    { label: "5.000.000 - 10.000.000 VND", min: 5000000, max: 10000000 },
-    { label: "10.000.000 - 20.000.000 VND", min: 10000000, max: 20000000 },
-    { label: "Above 20.000.000 VND", min: 20000000, max: Infinity },
-  ],
-};
-
 const ShopPage = () => {
-  const [products, setProducts] = useState(productsData);
+  const dispatch = useDispatch();
+  const { products, loading } = useSelector((state) => state.products);
+  const { categories } = useSelector((state) => state.categories);
+
   const [filtersState, setFiltersState] = useState({
-    category: "All",
-    type: "All",
-    priceRange: "All",
+    category: "",
+    type: "",
+    minPrice: "",
+    maxPrice: "",
+    material: "",
+    sort: "-createdAt",
   });
 
-  //filtering functions
-  const applyFilters = () => {
-    let filteredProducts = productsData;
-
-    // filter by category
-    if (filtersState.category && filtersState.category !== "All") {
-      const categorySlug = categoriesMap[filtersState.category];
-      filteredProducts = filteredProducts.filter(
-        (product) => product.category === categorySlug
-      );
-    }
-
-    // filter by type
-    if (filtersState.type && filtersState.type !== "All") {
-      filteredProducts = filteredProducts.filter(
-        (product) => product.type === filtersState.type
-      );
-    }
-
-    // filter by price range
-    if (filtersState.priceRange && filtersState.priceRange !== "All") {
-      const [minPrice, maxPrice] = filtersState.priceRange
-        .split("-")
-        .map(Number);
-
-      filteredProducts = filteredProducts.filter((product) => {
-        // chuyển "12.000.000" -> 12000000
-        const numericPrice = Number(product.price.replace(/\./g, ""));
-        return numericPrice >= minPrice && numericPrice <= maxPrice;
-      });
-    }
-
-    setProducts(filteredProducts);
-  };
-
+  // Fetch categories on mount
   useEffect(() => {
-    applyFilters();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filtersState]);
+    dispatch(fetchCategories(true)); // Only active categories
+  }, [dispatch]);
+
+  // Fetch products when filters change
+  useEffect(() => {
+    const filters = {
+      page: 1,
+      limit: 12,
+      isActive: true,
+    };
+
+    if (filtersState.category) filters.category = filtersState.category;
+    if (filtersState.type) filters.type = filtersState.type;
+    if (filtersState.minPrice) filters.minPrice = filtersState.minPrice;
+    if (filtersState.maxPrice) filters.maxPrice = filtersState.maxPrice;
+    if (filtersState.material) filters.material = filtersState.material;
+    if (filtersState.sort) filters.sort = filtersState.sort;
+
+    dispatch(fetchProducts(filters));
+  }, [dispatch, filtersState]);
 
   const clearFilter = () => {
     setFiltersState({
-      categories: "All",
-      Types: "All",
-      priceRanges: "All",
+      category: "",
+      type: "",
+      minPrice: "",
+      maxPrice: "",
+      material: "",
+      sort: "-createdAt",
     });
+  };
+
+  // Build filters object for ShopFiltering component
+  const filters = {
+    categories: ["All", ...categories.map((cat) => cat.name)],
+    types: [
+      "All",
+      "Bàn",
+      "Ghế",
+      "Giường",
+      "Tủ",
+      "Kệ",
+      "Sofa",
+      "Bàn Làm Việc",
+      "Tủ Quần Áo",
+      "Bàn Ăn",
+      "Ghế Ăn",
+      "Bàn Trà",
+      "Kệ Sách",
+      "Tủ Giày",
+    ],
+    priceRanges: [
+      { label: "All", min: "", max: "" },
+      { label: "Under 2.000.000 VND", min: 0, max: 2000000 },
+      { label: "2.000.000 - 5.000.000 VND", min: 2000000, max: 5000000 },
+      { label: "5.000.000 - 10.000.000 VND", min: 5000000, max: 10000000 },
+      { label: "10.000.000 - 20.000.000 VND", min: 10000000, max: 20000000 },
+      { label: "Above 20.000.000 VND", min: 20000000, max: "" },
+    ],
+    materials: ["All", "Gỗ Sồi", "Gỗ Tần Bì", "Gỗ Óc Chó", "Gỗ Thông", "Kim Loại"],
+    sortOptions: [
+      { label: "Newest First", value: "-createdAt" },
+      { label: "Price: Low to High", value: "price" },
+      { label: "Price: High to Low", value: "-price" },
+      { label: "Name: A-Z", value: "name" },
+    ],
   };
 
   return (
@@ -103,27 +94,47 @@ const ShopPage = () => {
       <section className="section__container bg-primary-light">
         <h2 className="section__header capitalize">Shop Page</h2>
         <p className="section__subheader">
-          Lorem ipsum dolor sit amet, consectetur adipisicing elit. Voluptatum,
-          commodi!
+          Discover our premium collection of handcrafted wooden furniture
         </p>
       </section>
 
       <section className="section__container">
         <div className="flex flex-col md:flex-row md:gap-12 gap-8 ">
-          {/* left side */}
+          {/* left side - filters */}
           <ShopFiltering
             filters={filters}
             filtersState={filtersState}
             setFiltersState={setFiltersState}
             clearFilter={clearFilter}
-          ></ShopFiltering>
+          />
 
-          {/* right side */}
-          <div>
+          {/* right side - products */}
+          <div className="flex-1">
             <h3 className="text-xl font-medium mb-6">
-              Products Available: {products.length}
+              {loading ? (
+                "Loading products..."
+              ) : (
+                `Products Available: ${products.length}`
+              )}
             </h3>
-            <ProductCards products={products}></ProductCards>
+
+            {loading ? (
+              <div className="flex justify-center items-center h-64">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#a67c52]"></div>
+              </div>
+            ) : products.length === 0 ? (
+              <div className="text-center py-12">
+                <p className="text-gray-500 text-lg">No products found</p>
+                <button
+                  onClick={clearFilter}
+                  className="mt-4 px-6 py-2 bg-[#a67c52] text-white rounded-lg hover:bg-[#8b653d]"
+                >
+                  Clear Filters
+                </button>
+              </div>
+            ) : (
+              <ProductCards products={products} />
+            )}
           </div>
         </div>
       </section>

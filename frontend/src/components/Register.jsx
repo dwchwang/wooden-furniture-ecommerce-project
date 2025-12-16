@@ -1,20 +1,49 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { registerUser, clearError } from "../redux/features/auth/authSlice";
+import { toast } from "react-toastify";
 
 const Register = () => {
-  const [message, setMessage] = useState("");
-  const [username, setUsername] = useState("");
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { loading, error, isAuthenticated } = useSelector((state) => state.auth);
+
+  const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [phone, setPhone] = useState("");
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      toast.success("Registration successful! Welcome!");
+      navigate("/");
+    }
+  }, [isAuthenticated, navigate]);
+
+  useEffect(() => {
+    if (error) {
+      toast.error(error);
+      dispatch(clearError());
+    }
+  }, [error, dispatch]);
+
   const handleRegister = async (e) => {
     e.preventDefault();
-    const data = {
-      username,
-      email,
-      password,
-    };
-    console.log(data);
+
+    if (!fullName || !email || !password) {
+      toast.error("Please fill in all required fields");
+      return;
+    }
+
+    if (password.length < 6) {
+      toast.error("Password must be at least 6 characters");
+      return;
+    }
+
+    dispatch(registerUser({ fullName, email, password, phone }));
   };
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#f5efe6] px-4">
       <div className="bg-[#e9dfd0] shadow-xl rounded-2xl p-10 w-full max-w-md border border-[#d8cbb8]">
@@ -35,61 +64,71 @@ const Register = () => {
         <form className="space-y-5" onSubmit={handleRegister}>
           <div>
             <label className="block text-sm font-medium text-[#4a3b2c] mb-1">
-              Username
+              Full Name <span className="text-red-500">*</span>
             </label>
             <input
               type="text"
-              placeholder="Your username"
-              autoComplete="username"
-              onChange={(e) => setUsername(e.target.value)}
-              className="w-full px-4 py-2 rounded-lg border border-[#cbbda9] bg-[#fdfaf5] focus:outline-none focus:ring-2 focus:ring-[#a67c52]"
+              placeholder="Your full name"
+              required
+              value={fullName}
+              onChange={(e) => setFullName(e.target.value)}
+              disabled={loading}
+              className="w-full px-4 py-2 rounded-lg border border-[#cbbda9] bg-[#fdfaf5] focus:outline-none focus:ring-2 focus:ring-[#a67c52] disabled:opacity-50"
             />
           </div>
 
           <div>
             <label className="block text-sm font-medium text-[#4a3b2c] mb-1">
-              Email
+              Email <span className="text-red-500">*</span>
             </label>
             <input
               type="email"
               placeholder="Email Address"
+              required
               autoComplete="email"
+              value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-4 py-2 rounded-lg border border-[#cbbda9] bg-[#fdfaf5] focus:outline-none focus:ring-2 focus:ring-[#a67c52]"
+              disabled={loading}
+              className="w-full px-4 py-2 rounded-lg border border-[#cbbda9] bg-[#fdfaf5] focus:outline-none focus:ring-2 focus:ring-[#a67c52] disabled:opacity-50"
             />
           </div>
 
           <div>
             <label className="block text-sm font-medium text-[#4a3b2c] mb-1">
-              Password
+              Phone (Optional)
             </label>
             <input
-              type="password"
-              placeholder="Password"
-              autoComplete="new-password"
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-4 py-2 rounded-lg border border-[#cbbda9] bg-[#fdfaf5] focus:outline-none focus:ring-2 focus:ring-[#a67c52]"
+              type="tel"
+              placeholder="Phone number"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              disabled={loading}
+              className="w-full px-4 py-2 rounded-lg border border-[#cbbda9] bg-[#fdfaf5] focus:outline-none focus:ring-2 focus:ring-[#a67c52] disabled:opacity-50"
             />
           </div>
 
-          {/* <div>
+          <div>
             <label className="block text-sm font-medium text-[#4a3b2c] mb-1">
-              Confirm Password
+              Password <span className="text-red-500">*</span>
             </label>
             <input
               type="password"
-              placeholder="password"
-              className="w-full px-4 py-2 rounded-lg border border-[#cbbda9] bg-[#fdfaf5] focus:outline-none focus:ring-2 focus:ring-[#a67c52]"
+              placeholder="Password (min 6 characters)"
+              required
+              autoComplete="new-password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              disabled={loading}
+              className="w-full px-4 py-2 rounded-lg border border-[#cbbda9] bg-[#fdfaf5] focus:outline-none focus:ring-2 focus:ring-[#a67c52] disabled:opacity-50"
             />
-          </div> */}
-
-          {message && <p className="text-red-500 text-sm mt-1">{message}</p>}
+          </div>
 
           <button
             type="submit"
-            className="w-full bg-[#a67c52] text-white font-medium py-2 rounded-lg hover:bg-[#8b653d] transition-colors"
+            disabled={loading}
+            className="w-full bg-[#a67c52] text-white font-medium py-2 rounded-lg hover:bg-[#8b653d] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            Sign Up
+            {loading ? "Creating account..." : "Sign Up"}
           </button>
         </form>
 

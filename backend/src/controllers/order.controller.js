@@ -136,9 +136,7 @@ const createOrder = asyncHandler(async (req, res) => {
           items: orderItems,
           shippingAddress,
           subtotal,
-          voucher: voucherCode
-            ? { code: voucherCode.toUpperCase(), discountAmount }
-            : undefined,
+          discount: discountAmount,
           shippingFee,
           total,
           paymentMethod,

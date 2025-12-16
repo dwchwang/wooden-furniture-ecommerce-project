@@ -74,6 +74,11 @@ const orderSchema = new mongoose.Schema(
       required: true,
       min: [0, "Subtotal must be positive"],
     },
+    discount: {
+      type: Number,
+      default: 0,
+      min: [0, "Discount must be positive"],
+    },
     voucher: {
       code: String,
       discountAmount: {

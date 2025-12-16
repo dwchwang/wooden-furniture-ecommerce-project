@@ -34,7 +34,7 @@ const createPaymentUrl = (orderId, amount, orderInfo, ipAddr, returnUrl) => {
     vnp_TxnRef: orderId,
     vnp_OrderInfo: orderInfo,
     vnp_OrderType: "other",
-    vnp_Amount: amount * 100, // VNPay requires amount in smallest currency unit
+    vnp_Amount: Math.round(amount) * 100, // Ensure integer, VNPay requires amount in smallest currency unit
     vnp_ReturnUrl: returnUrl || process.env.VNPAY_RETURN_URL,
     vnp_IpAddr: ipAddr,
     vnp_CreateDate: createDate,
@@ -44,14 +44,25 @@ const createPaymentUrl = (orderId, amount, orderInfo, ipAddr, returnUrl) => {
   // Sort parameters
   vnpParams = sortObject(vnpParams);
 
-  // Create signature
-  const signData = querystring.stringify(vnpParams, { encode: false });
+  console.log("VNPay params before signing:", vnpParams);
+
+  // Create signature - use RAW values (no encoding) for signature
+  const signData = Object.keys(vnpParams)
+    .map(key => `${key}=${vnpParams[key]}`)
+    .join('&');
+  
+  console.log("Sign data:", signData);
+  
   const hmac = crypto.createHmac("sha512", secretKey);
   const signed = hmac.update(Buffer.from(signData, "utf-8")).digest("hex");
   vnpParams.vnp_SecureHash = signed;
 
-  // Build payment URL
-  const paymentUrl = vnpUrl + "?" + querystring.stringify(vnpParams, { encode: false });
+  // Build payment URL - encode for URL
+  const paymentUrl = vnpUrl + "?" + Object.keys(vnpParams)
+    .map(key => `${key}=${encodeURIComponent(vnpParams[key])}`)
+    .join('&');
+  
+  console.log("Final payment URL:", paymentUrl);
 
   return paymentUrl;
 };

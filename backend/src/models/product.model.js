@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { generateUniqueSlug } from "../utils/slug.util.js";
 
 const productSchema = new mongoose.Schema(
   {
@@ -24,6 +25,27 @@ const productSchema = new mongoose.Schema(
       ref: "Category",
       required: [true, "Category is required"],
       index: true,
+    },
+    type: {
+      type: String,
+      trim: true,
+      index: true,
+      enum: [
+        "Bàn",
+        "Ghế", 
+        "Giường",
+        "Tủ",
+        "Kệ",
+        "Sofa",
+        "Bàn Làm Việc",
+        "Tủ Quần Áo",
+        "Bàn Ăn",
+        "Ghế Ăn",
+        "Bàn Trà",
+        "Kệ Sách",
+        "Tủ Giày",
+        "Khác"
+      ],
     },
     material: {
       type: String,
@@ -94,9 +116,19 @@ const productSchema = new mongoose.Schema(
   }
 );
 
+// Pre-save hook to generate slug
+productSchema.pre("save", async function (next) {
+  if (!this.slug && this.name) {
+    this.slug = await generateUniqueSlug(this.name, this.constructor);
+  }
+  next();
+});
+
 // Indexes for better query performance
 productSchema.index({ name: "text", description: "text" });
 productSchema.index({ category: 1, isActive: 1 });
+productSchema.index({ type: 1, isActive: 1 });
+productSchema.index({ category: 1, type: 1, isActive: 1 });
 productSchema.index({ isFeatured: 1, isActive: 1 });
 productSchema.index({ averageRating: -1 });
 

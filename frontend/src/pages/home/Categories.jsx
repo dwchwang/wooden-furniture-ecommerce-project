@@ -1,39 +1,50 @@
+import { useEffect } from "react";
 import { Link } from "react-router-dom";
-import category1 from "../../assets/category-livingroom.jpg";
-import category2 from "../../assets/category-bedroom.jpg";
-import category3 from "../../assets/category-diningroom.jpg";
-import category4 from "../../assets/category-decor.jpg";
-import category5 from "../../assets/category-homeoffice.jpg";
-import category6 from "../../assets/category-outdoor.jpg";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchCategories } from "../../redux/features/categories/categoriesSlice";
+import { getImageUrl } from "../../utils/helpers";
 
 const Categories = () => {
-  const categories = [
-    { name: "Living Room", image: category1, path: "living-room" },
-    { name: "Bedroom", image: category2, path: "bedroom" },
-    { name: "Dining Room", image: category3, path: "dining-room" },
-    {
-      name: "Decor & Accessories",
-      image: category4,
-      path: "decor-accessories",
-    },
-    { name: "Home Office", image: category5, path: "home-office" },
-    { name: "Outdoor", image: category6, path: "outdoor" },
-  ];
-  return (
-    <>
+  const dispatch = useDispatch();
+  const { categories, loading } = useSelector((state) => state.categories);
+
+  useEffect(() => {
+    dispatch(fetchCategories(true)); // Only active categories
+  }, [dispatch]);
+
+  if (loading) {
+    return (
       <div className="product__grid">
-        {categories.map((categories) => (
-          <Link
-            to={`/categories/${categories.path}`}
-            className="categories__card"
-            key={categories.name}
-          >
-            <img src={categories.image} alt={categories.name} />
-            <h4>{categories.name}</h4>
-          </Link>
+        {[...Array(6)].map((_, i) => (
+          <div key={i} className="categories__card animate-pulse">
+            <div className="h-48 bg-gray-200 rounded"></div>
+            <div className="h-6 bg-gray-200 rounded mt-2"></div>
+          </div>
         ))}
       </div>
-    </>
+    );
+  }
+
+  // Show only top 6 categories
+  const displayCategories = categories.slice(0, 6);
+
+  return (
+    <div className="product__grid">
+      {displayCategories.map((category) => (
+        <Link
+          to={`/categories/${category.slug}`}
+          className="categories__card"
+          key={category._id}
+        >
+          <img
+            src={getImageUrl(category.image ? [category.image] : [])}
+            alt={category.name}
+            className="w-full h-48 object-cover rounded"
+          />
+          <h4 className="mt-2 text-center font-semibold">{category.name}</h4>
+        </Link>
+      ))}
+    </div>
   );
 };
 

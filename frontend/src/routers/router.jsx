@@ -5,6 +5,11 @@ import CategoryPage from "../pages/categories/CategoryPage";
 import Search from "../pages/search/Search";
 import ShopPage from "../pages/shop/ShopPage";
 import SingleProduct from "../pages/shop/shopDetails/SingleProduct";
+import CheckoutPage from "../pages/checkout/CheckoutPage";
+import OrdersPage from "../pages/orders/OrdersPage";
+import OrderDetailPage from "../pages/orders/OrderDetailPage";
+import PaymentSuccess from "../pages/payment/PaymentSuccess";
+import PaymentFailed from "../pages/payment/PaymentFailed";
 import Login from "../components/Login";
 import Register from "../components/Register";
 
@@ -32,6 +37,26 @@ const router = createBrowserRouter([
       {
         path: "/shop/:id",
         element: <SingleProduct></SingleProduct>,
+      },
+      {
+        path: "/checkout",
+        element: <CheckoutPage></CheckoutPage>,
+      },
+      {
+        path: "/orders",
+        element: <OrdersPage></OrdersPage>,
+      },
+      {
+        path: "/orders/:id",
+        element: <OrderDetailPage></OrderDetailPage>,
+      },
+      {
+        path: "/payment/success",
+        element: <PaymentSuccess></PaymentSuccess>,
+      },
+      {
+        path: "/payment/failed",
+        element: <PaymentFailed></PaymentFailed>,
       },
     ],
   },

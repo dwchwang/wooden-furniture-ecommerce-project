@@ -1,4 +1,5 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import OrderSummary from "./OrderSummary";
 import { useDispatch } from "react-redux";
 import {
@@ -8,27 +9,33 @@ import {
 
 const CartModal = ({ products, isOpen, onClose }) => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+
   const handleQuantityChange = (type, id) => {
     const payload = { type, _id: id };
     dispatch(updateQuantity(payload));
   };
+
   const handleRemoveItem = (e, id) => {
     e.preventDefault();
     const payload = { _id: id };
     dispatch(removeFromCart(payload));
   };
-  // console.log(products);
+
+  const handleCheckout = () => {
+    onClose();
+    navigate("/checkout");
+  };
+
   return (
     <div
-      className={`fixed z-[1000] inset-0 bg-black/50 transition-opacity ${
-        isOpen ? "opacity-100" : "opacity-0 pointer-events-none"
-      }`}
+      className={`fixed z-[1000] inset-0 bg-black/50 transition-opacity ${isOpen ? "opacity-100" : "opacity-0 pointer-events-none"
+        }`}
       style={{ transition: "opacity 0.3s ease-in-out" }}
     >
       <div
-        className={`fixed right-0 top-0 md:w-1/3 w-full bg-white h-full overflow-y-auto transition-transform ${
-          isOpen ? "translate-x-0" : "translate-x-full"
-        }`}
+        className={`fixed right-0 top-0 md:w-2/5 w-full bg-white h-full overflow-y-auto transition-transform ${isOpen ? "translate-x-0" : "translate-x-full"
+          }`}
         style={{
           transition: "transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)",
         }}
@@ -55,7 +62,7 @@ const CartModal = ({ products, isOpen, onClose }) => {
                   className="flex flex-col md:flex-row md:items-center md:justify-between md:p-5 p-2 mb-4 shadow-md "
                 >
                   <div className="flex items-center">
-                    <div className="w-[350px] flex items-center">
+                    <div className="w-[300px] flex items-center">
                       <span className="mr-4 px-1 bg-primary text-white rounded-full">
                         0{index + 1}
                       </span>
@@ -75,7 +82,7 @@ const CartModal = ({ products, isOpen, onClose }) => {
                     </div>
                     <div className="flex flex-row md:justify-start justify-end items-center mt-2">
                       <button
-                        className="!size-6 flex items-center justify-center px-1.5 rounded-full bg-gray-200 text-gray-700 hover:bg-primary hover:text-white ml-8"
+                        className="!size-6 flex items-center justify-center px-1.5 rounded-full bg-gray-200 text-gray-700 hover:bg-primary hover:text-white ml-4"
                         onClick={() =>
                           handleQuantityChange("decrement", item._id)
                         }
@@ -94,10 +101,10 @@ const CartModal = ({ products, isOpen, onClose }) => {
                         +
                       </button>
                     </div>
-                    <div className="ml-8">
+                    <div className="ml-4">
                       <button
-                        className="text-red-500 hover:text-red-800 mr-4 cursor-pointer"
-                        onClick={() => handleRemoveItem(item._id)}
+                        className="text-red-500 hover:text-red-800 mr-2 cursor-pointer"
+                        onClick={(e) => handleRemoveItem(e, item._id)}
                       >
                         Remove
                       </button>
@@ -107,8 +114,19 @@ const CartModal = ({ products, isOpen, onClose }) => {
               ))
             )}
           </div>
+
           {/* calculation */}
-          {products.length > 0 && <OrderSummary />}
+          {products.length > 0 && (
+            <>
+              <OrderSummary />
+              <button
+                onClick={handleCheckout}
+                className="w-full mt-4 px-6 py-3 bg-[#a67c52] text-white rounded-lg hover:bg-[#8b653d] font-semibold transition-colors"
+              >
+                Proceed to Checkout
+              </button>
+            </>
+          )}
         </div>
       </div>
     </div>

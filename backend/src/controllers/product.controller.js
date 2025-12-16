@@ -13,6 +13,7 @@ const createProduct = asyncHandler(async (req, res) => {
     name,
     description,
     category,
+    type,
     material,
     dimensions,
     weight,
@@ -40,6 +41,7 @@ const createProduct = asyncHandler(async (req, res) => {
     slug,
     description,
     category,
+    type,
     material,
     dimensions,
     weight,
@@ -80,6 +82,7 @@ const getAllProducts = asyncHandler(async (req, res) => {
     page = 1,
     limit = 20,
     category,
+    type,
     material,
     minPrice,
     maxPrice,
@@ -99,6 +102,10 @@ const getAllProducts = asyncHandler(async (req, res) => {
   
   if (category) {
     filter.category = category;
+  }
+  
+  if (type) {
+    filter.type = type;
   }
   
   if (material) {
@@ -225,6 +232,7 @@ const updateProduct = asyncHandler(async (req, res) => {
     name,
     description,
     category,
+    type,
     material,
     dimensions,
     weight,
@@ -255,6 +263,7 @@ const updateProduct = asyncHandler(async (req, res) => {
   }
 
   if (description !== undefined) product.description = description;
+  if (type !== undefined) product.type = type;
   if (material !== undefined) product.material = material;
   if (dimensions !== undefined) product.dimensions = dimensions;
   if (weight !== undefined) product.weight = weight;

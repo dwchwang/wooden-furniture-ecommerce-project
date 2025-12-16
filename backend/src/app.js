@@ -45,7 +45,7 @@ app.use('/api/v1/orders', orderRoutes);
 app.use('/api/v1/reviews', reviewRoutes);
 app.use('/api/v1/messages', messageRoutes);
 app.use('/api/v1/upload', uploadRoutes);
-app.use('/api/v1/payment', paymentRoutes);
+app.use('/api/v1/payments', paymentRoutes);
 
 
 app.get('/', (req, res) => {
