@@ -6,41 +6,27 @@ const ShopFiltering = ({
   setFiltersState,
   clearFilter,
 }) => {
-  const handleCategoryChange = (categoryName) => {
-    if (categoryName === "All") {
-      setFiltersState({ ...filtersState, category: "" });
-    } else {
-      // Find category ID by name
-      const category = filters.categories.find((cat) => cat === categoryName);
-      setFiltersState({ ...filtersState, category: categoryName });
-    }
+  const handleCategoryChange = (categoryId) => {
+    setFiltersState({ ...filtersState, category: categoryId });
+  };
+
+  const handleTypeChange = (type) => {
+    setFiltersState({ ...filtersState, type });
+  };
+
+  const handleMaterialChange = (material) => {
+    setFiltersState({ ...filtersState, material });
   };
 
   const handlePriceChange = (range) => {
-    if (range.label === "All") {
+    if (range.label === "Tất cả giá") {
       setFiltersState({ ...filtersState, minPrice: "", maxPrice: "" });
     } else {
       setFiltersState({
         ...filtersState,
         minPrice: range.min,
-        maxPrice: range.max || "",
+        maxPrice: range.max,
       });
-    }
-  };
-
-  const handleMaterialChange = (material) => {
-    if (material === "All") {
-      setFiltersState({ ...filtersState, material: "" });
-    } else {
-      setFiltersState({ ...filtersState, material });
-    }
-  };
-
-  const handleTypeChange = (type) => {
-    if (type === "All") {
-      setFiltersState({ ...filtersState, type: "" });
-    } else {
-      setFiltersState({ ...filtersState, type });
     }
   };
 
@@ -48,111 +34,137 @@ const ShopFiltering = ({
     setFiltersState({ ...filtersState, sort: sortValue });
   };
 
+  const hasActiveFilters =
+    filtersState.category ||
+    filtersState.type ||
+    filtersState.material ||
+    filtersState.minPrice ||
+    filtersState.maxPrice ||
+    filtersState.sort !== "-createdAt";
+
   return (
-    <div className="space-y-5 flex-shrink-0 w-full md:w-64">
-      <h3 className="text-xl font-semibold">Filters</h3>
-
-      {/* Category - Phòng */}
-      <div className="flex flex-col space-y-2">
-        <h4 className="font-medium text-lg">Phòng</h4>
-        <hr />
-        {filters.categories.map((category) => (
-          <label key={category} className="capitalize cursor-pointer">
-            <input
-              type="radio"
-              name="category"
-              value={category}
-              checked={
-                category === "All"
-                  ? !filtersState.category
-                  : filtersState.category === category
-              }
-              onChange={() => handleCategoryChange(category)}
-            />
-            <span className="ml-1">{category}</span>
-          </label>
-        ))}
+    <div className="bg-white rounded-lg shadow-md p-6 sticky top-4">
+      {/* Header */}
+      <div className="flex items-center justify-between mb-6">
+        <h3 className="text-lg font-semibold text-gray-900">Bộ Lọc</h3>
+        {hasActiveFilters && (
+          <button
+            onClick={clearFilter}
+            className="text-sm text-[#a67c52] hover:text-[#8b653d] font-medium transition-colors"
+          >
+            Xóa Tất Cả
+          </button>
+        )}
       </div>
 
-      {/* Type - Loại Đồ */}
-      {filters.types && (
-        <div className="flex flex-col space-y-2">
-          <h4 className="font-medium text-lg">Loại Đồ</h4>
-          <hr />
-          {filters.types.map((type) => (
-            <label key={type} className="capitalize cursor-pointer">
-              <input
-                type="radio"
-                name="type"
-                value={type}
-                checked={
-                  type === "All"
-                    ? !filtersState.type
-                    : filtersState.type === type
-                }
-                onChange={() => handleTypeChange(type)}
-              />
-              <span className="ml-1">{type}</span>
-            </label>
-          ))}
+      {/* Categories */}
+      {filters.categories && filters.categories.length > 0 && (
+        <div className="mb-6">
+          <h4 className="font-medium text-gray-900 mb-3">Danh Mục</h4>
+          <hr className="mb-3 border-gray-200" />
+          <div className="space-y-2">
+            {filters.categories.map((cat) => (
+              <label key={cat._id} className="flex items-center cursor-pointer group">
+                <input
+                  type="radio"
+                  name="category"
+                  checked={filtersState.category === cat._id}
+                  onChange={() => handleCategoryChange(cat._id)}
+                  className="w-4 h-4 text-[#a67c52] focus:ring-[#a67c52] focus:ring-2"
+                />
+                <span className="ml-3 text-gray-700 group-hover:text-[#a67c52] transition-colors">
+                  {cat.name}
+                </span>
+              </label>
+            ))}
+          </div>
         </div>
       )}
 
-      {/* Material */}
-      {filters.materials && (
-        <div className="flex flex-col space-y-2">
-          <h4 className="font-medium text-lg">Material</h4>
-          <hr />
-          {filters.materials.map((material) => (
-            <label key={material} className="capitalize cursor-pointer">
-              <input
-                type="radio"
-                name="material"
-                value={material}
-                checked={
-                  material === "All"
-                    ? !filtersState.material
-                    : filtersState.material === material
-                }
-                onChange={() => handleMaterialChange(material)}
-              />
-              <span className="ml-1">{material}</span>
-            </label>
-          ))}
+      {/* Product Types */}
+      {filters.types && filters.types.length > 0 && (
+        <div className="mb-6">
+          <h4 className="font-medium text-gray-900 mb-3">Loại Sản Phẩm</h4>
+          <hr className="mb-3 border-gray-200" />
+          <div className="space-y-2">
+            {filters.types.map((type) => (
+              <label key={type} className="flex items-center cursor-pointer group">
+                <input
+                  type="radio"
+                  name="type"
+                  checked={type === "All" ? !filtersState.type : filtersState.type === type}
+                  onChange={() => handleTypeChange(type === "All" ? "" : type)}
+                  className="w-4 h-4 text-[#a67c52] focus:ring-[#a67c52] focus:ring-2"
+                />
+                <span className="ml-3 text-gray-700 group-hover:text-[#a67c52] transition-colors">
+                  {type === "All" ? "Tất cả loại" : type}
+                </span>
+              </label>
+            ))}
+          </div>
         </div>
       )}
 
-      {/* Price Range */}
-      <div className="flex flex-col space-y-2">
-        <h4 className="font-medium text-lg">Price Range</h4>
-        <hr />
-        {filters.priceRanges.map((range) => (
-          <label key={range.label} className="capitalize cursor-pointer">
-            <input
-              type="radio"
-              name="priceRange"
-              checked={
-                range.label === "All"
-                  ? !filtersState.minPrice && !filtersState.maxPrice
-                  : filtersState.minPrice === range.min &&
-                  (filtersState.maxPrice === range.max || (!filtersState.maxPrice && !range.max))
-              }
-              onChange={() => handlePriceChange(range)}
-            />
-            <span className="ml-1">{range.label}</span>
-          </label>
-        ))}
-      </div>
+      {/* Materials */}
+      {filters.materials && filters.materials.length > 0 && (
+        <div className="mb-6">
+          <h4 className="font-medium text-gray-900 mb-3">Chất Liệu</h4>
+          <hr className="mb-3 border-gray-200" />
+          <div className="space-y-2">
+            {filters.materials.map((material) => (
+              <label key={material} className="flex items-center cursor-pointer group">
+                <input
+                  type="radio"
+                  name="material"
+                  checked={material === "All" ? !filtersState.material : filtersState.material === material}
+                  onChange={() => handleMaterialChange(material === "All" ? "" : material)}
+                  className="w-4 h-4 text-[#a67c52] focus:ring-[#a67c52] focus:ring-2"
+                />
+                <span className="ml-3 text-gray-700 group-hover:text-[#a67c52] transition-colors">
+                  {material === "All" ? "Tất cả chất liệu" : material}
+                </span>
+              </label>
+            ))}
+          </div>
+        </div>
+      )}
 
-      {/* Sort */}
-      {filters.sortOptions && (
-        <div className="flex flex-col space-y-2">
-          <h4 className="font-medium text-lg">Sort By</h4>
-          <hr />
+      {/* Price Ranges */}
+      {filters.priceRanges && filters.priceRanges.length > 0 && (
+        <div className="mb-6">
+          <h4 className="font-medium text-gray-900 mb-3">Khoảng Giá</h4>
+          <hr className="mb-3 border-gray-200" />
+          <div className="space-y-2">
+            {filters.priceRanges.map((range) => (
+              <label key={range.label} className="flex items-center cursor-pointer group">
+                <input
+                  type="radio"
+                  name="price"
+                  checked={
+                    filtersState.minPrice === range.min &&
+                    filtersState.maxPrice === range.max
+                  }
+                  onChange={() => handlePriceChange(range)}
+                  className="w-4 h-4 text-[#a67c52] focus:ring-[#a67c52] focus:ring-2"
+                />
+                <span className="ml-3 text-gray-700 group-hover:text-[#a67c52] transition-colors">
+                  {range.label}
+                </span>
+              </label>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Sort Options */}
+      {filters.sortOptions && filters.sortOptions.length > 0 && (
+        <div>
+          <h4 className="font-medium text-gray-900 mb-3">Sắp Xếp</h4>
+          <hr className="mb-3 border-gray-200" />
           <select
             value={filtersState.sort}
             onChange={(e) => handleSortChange(e.target.value)}
-            className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#a67c52]"
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#a67c52] focus:border-transparent transition-all"
           >
             {filters.sortOptions.map((option) => (
               <option key={option.value} value={option.value}>
@@ -162,14 +174,6 @@ const ShopFiltering = ({
           </select>
         </div>
       )}
-
-      {/* Clear button */}
-      <button
-        onClick={clearFilter}
-        className="w-full bg-[#a67c52] py-2 px-4 text-white rounded-lg hover:bg-[#8b653d] transition-colors"
-      >
-        Clear All Filters
-      </button>
     </div>
   );
 };

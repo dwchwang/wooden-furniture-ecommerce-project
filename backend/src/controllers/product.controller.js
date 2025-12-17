@@ -105,7 +105,9 @@ const getAllProducts = asyncHandler(async (req, res) => {
   }
   
   if (type) {
-    filter.type = type;
+    // Use regex to match type starting with the filter value
+    // E.g., "Bàn" matches "Bàn", "Bàn Làm Việc", "Bàn Ăn", "Bàn Trà"
+    filter.type = new RegExp(`^${type}`, "i");
   }
   
   if (material) {

@@ -4,7 +4,7 @@
 :root {
   --primary-color: #8B5E3C;
   --primary-color-dark: #5C3A21;
-  --primary-color-light:  #EADBC8;
+  --primary-color-light: #EADBC8;
   --text-dark: #2C2C2C;
   --text-light: #6B6B6B;
   --extra-light: #F5F3EF;
@@ -60,7 +60,7 @@
   background-color: var(--primary-color-dark);
 }
 
-button{
+button {
   cursor: pointer;
 }
 
@@ -92,15 +92,20 @@ nav {
   display: flex;
   align-items: center;
   gap: 2rem;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif !important;
 }
 
-.link a {
-  font-weight: 500;
-  color: var(--text-dark);
+.nav__links .link a {
+  font-size: 15px !important;
+  font-weight: 500 !important;
+  color: #374151 !important;
+  text-decoration: none;
+  transition: color 0.3s ease;
+  font-family: inherit !important;
 }
 
-.link a:hover {
-  color: var(--primary-color);
+.nav__links .link a:hover {
+  color: #a67c52 !important;
 }
 
 .nav__logo a {
@@ -195,13 +200,17 @@ nav {
 }
 
 .categories__card img {
-  width: 100px;             /* thay vì max-width */
-  height: 100px;            /* thêm height để ảnh đồng đều */
-  object-fit: cover;        /* cắt ảnh cho vừa khung, không méo */
+  width: 100px;
+  /* thay vì max-width */
+  height: 100px;
+  /* thêm height để ảnh đồng đều */
+  object-fit: cover;
+  /* cắt ảnh cho vừa khung, không méo */
   margin: auto;
   margin-bottom: 1rem;
   border: 5px solid var(--white);
-  border-radius: 50%;       /* tròn hơn */
+  border-radius: 50%;
+  /* tròn hơn */
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
   display: block;
 }
@@ -280,7 +289,7 @@ nav {
   transform: scale(1.05);
 }
 
-.shopping__icon{
+.shopping__icon {
   padding: 6px;
   cursor: pointer;
 }
@@ -340,7 +349,7 @@ nav {
   /* position: relative; */
   display: flex;
   justify-content: center;
-  align-items: center; 
+  align-items: center;
 }
 
 .deals__image img {
@@ -527,7 +536,7 @@ nav {
   gap: 1rem;
 }
 
-.instagram__grid img{
+.instagram__grid img {
   height: 80px;
   width: 80px;
   object-fit: cover;
@@ -546,12 +555,12 @@ nav {
   margin-bottom: 48px;
 }
 
-.search-button{
+.search-button {
   padding: 8px 32px;
   margin-bottom: 48px;
 }
 
-.search-button:hover{
+.search-button:hover {
   cursor: pointer;
   background-color: var(--primary-color-dark);
 }
@@ -642,7 +651,7 @@ nav {
   }
 }
 
-.nav__icons span a.dropdown-items{
+.nav__icons span a.dropdown-items {
   font-size: 16px;
 }
 
@@ -656,6 +665,6 @@ input[type="number"]::-webkit-outer-spin-button {
   @apply mt-1 block py-2.5 px-4 w-full rounded-md bg-gray-100 border-gray-300 shadow-sm focus:outline-none focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm
 }
 
-.add-product-btn{
+.add-product-btn {
   @apply mt-5 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500
 }

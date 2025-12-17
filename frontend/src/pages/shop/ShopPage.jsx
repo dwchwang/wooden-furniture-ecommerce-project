@@ -39,6 +39,7 @@ const ShopPage = () => {
     if (filtersState.material) filters.material = filtersState.material;
     if (filtersState.sort) filters.sort = filtersState.sort;
 
+    console.log('ShopPage filters:', filters); // DEBUG
     dispatch(fetchProducts(filters));
   }, [dispatch, filtersState]);
 
@@ -55,7 +56,7 @@ const ShopPage = () => {
 
   // Build filters object for ShopFiltering component
   const filters = {
-    categories: ["All", ...categories.map((cat) => cat.name)],
+    categories: [{ _id: "", name: "Tất cả danh mục" }, ...categories],
     types: [
       "All",
       "Bàn",
@@ -64,28 +65,23 @@ const ShopPage = () => {
       "Tủ",
       "Kệ",
       "Sofa",
-      "Bàn Làm Việc",
-      "Tủ Quần Áo",
-      "Bàn Ăn",
-      "Ghế Ăn",
-      "Bàn Trà",
-      "Kệ Sách",
-      "Tủ Giày",
+      "Khác",
     ],
     priceRanges: [
-      { label: "All", min: "", max: "" },
-      { label: "Under 2.000.000 VND", min: 0, max: 2000000 },
-      { label: "2.000.000 - 5.000.000 VND", min: 2000000, max: 5000000 },
-      { label: "5.000.000 - 10.000.000 VND", min: 5000000, max: 10000000 },
-      { label: "10.000.000 - 20.000.000 VND", min: 10000000, max: 20000000 },
-      { label: "Above 20.000.000 VND", min: 20000000, max: "" },
+      { label: "Tất cả giá", min: "", max: "" },
+      { label: "Dưới 2.000.000đ", min: 0, max: 2000000 },
+      { label: "2.000.000đ - 5.000.000đ", min: 2000000, max: 5000000 },
+      { label: "5.000.000đ - 10.000.000đ", min: 5000000, max: 10000000 },
+      { label: "10.000.000đ - 20.000.000đ", min: 10000000, max: 20000000 },
+      { label: "Trên 20.000.000đ", min: 20000000, max: "" },
     ],
     materials: ["All", "Gỗ Sồi", "Gỗ Tần Bì", "Gỗ Óc Chó", "Gỗ Thông", "Kim Loại"],
     sortOptions: [
-      { label: "Newest First", value: "-createdAt" },
-      { label: "Price: Low to High", value: "price" },
-      { label: "Price: High to Low", value: "-price" },
-      { label: "Name: A-Z", value: "name" },
+      { label: "Mới Nhất", value: "-createdAt" },
+      { label: "Giá: Thấp đến Cao", value: "basePrice" },
+      { label: "Giá: Cao đến Thấp", value: "-basePrice" },
+      { label: "Tên: A-Z", value: "name" },
+      { label: "Tên: Z-A", value: "-name" },
     ],
   };
 

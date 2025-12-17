@@ -9,6 +9,7 @@ export const productService = {
     if (filters.limit) params.append('limit', filters.limit);
     if (filters.search) params.append('search', filters.search);
     if (filters.category) params.append('category', filters.category);
+    if (filters.type) params.append('type', filters.type); // ADD THIS
     if (filters.minPrice) params.append('minPrice', filters.minPrice);
     if (filters.maxPrice) params.append('maxPrice', filters.maxPrice);
     if (filters.material) params.append('material', filters.material);
