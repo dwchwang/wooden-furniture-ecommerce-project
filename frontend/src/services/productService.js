@@ -7,13 +7,22 @@ export const productService = {
     
     if (filters.page) params.append('page', filters.page);
     if (filters.limit) params.append('limit', filters.limit);
+    if (filters.search) params.append('search', filters.search);
     if (filters.category) params.append('category', filters.category);
     if (filters.minPrice) params.append('minPrice', filters.minPrice);
     if (filters.maxPrice) params.append('maxPrice', filters.maxPrice);
     if (filters.material) params.append('material', filters.material);
     if (filters.isActive !== undefined) params.append('isActive', filters.isActive);
     if (filters.isFeatured !== undefined) params.append('isFeatured', filters.isFeatured);
-    if (filters.sort) params.append('sort', filters.sort);
+    
+    // Parse sort parameter (e.g., "-basePrice" -> sortBy=basePrice, sortOrder=desc)
+    if (filters.sort) {
+      const isDescending = filters.sort.startsWith('-');
+      const sortBy = isDescending ? filters.sort.substring(1) : filters.sort;
+      const sortOrder = isDescending ? 'desc' : 'asc';
+      params.append('sortBy', sortBy);
+      params.append('sortOrder', sortOrder);
+    }
     
     return await api.get(`/products?${params.toString()}`);
   },
@@ -25,7 +34,7 @@ export const productService = {
 
   // Search products
   searchProducts: async (query) => {
-    return await api.get(`/products/search?q=${encodeURIComponent(query)}`);
+    return await api.get(`/products?search=${encodeURIComponent(query)}&limit=10`);
   },
 
   // Get product by ID

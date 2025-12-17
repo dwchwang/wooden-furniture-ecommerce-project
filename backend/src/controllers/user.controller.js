@@ -8,6 +8,7 @@ import {
   validatePhone,
   validateRequiredFields,
 } from "../validations/common.validation.js";
+import { uploadOnCloudinary } from "../utils/cloudinary.util.js";
 
 // Helper function to generate tokens and save refresh token
 const generateTokens = async (userId) => {
@@ -183,11 +184,12 @@ const getCurrentUser = asyncHandler(async (req, res) => {
 
 // Update user profile
 const updateUserProfile = asyncHandler(async (req, res) => {
-  const { fullName, phone } = req.body;
+  const { fullName, phone, avatar } = req.body;
 
   const updateData = {};
   if (fullName) updateData.fullName = fullName;
   if (phone) updateData.phone = phone;
+  if (avatar) updateData.avatar = avatar;
 
   const user = await User.findByIdAndUpdate(
     req.user._id,
@@ -232,6 +234,43 @@ const changePassword = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, {}, "Password changed successfully"));
 });
 
+// Update user avatar
+const updateUserAvatar = asyncHandler(async (req, res) => {
+  // File is saved to disk via multer
+  if (!req.file) {
+    throw new ApiError(400, "Avatar file is required");
+  }
+
+  const localFilePath = req.file.path;
+  
+  // Upload to Cloudinary
+  const cloudinaryResponse = await uploadOnCloudinary(localFilePath);
+  
+  if (!cloudinaryResponse) {
+    throw new ApiError(500, "Something went wrong while uploading avatar");
+  }
+
+  const avatarUrl = cloudinaryResponse.secure_url;
+
+  const user = await User.findByIdAndUpdate(
+    req.user._id,
+    {
+      $set: {
+        avatar: avatarUrl
+      }
+    },
+    { new: true }
+  ).select("-password -refreshToken");
+
+  if (!user) {
+    throw new ApiError(404, "User not found");
+  }
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, { user }, "Avatar updated successfully"));
+});
+
 export {
   registerUser,
   loginUser,
@@ -239,4 +278,5 @@ export {
   getCurrentUser,
   updateUserProfile,
   changePassword,
+  updateUserAvatar,
 };

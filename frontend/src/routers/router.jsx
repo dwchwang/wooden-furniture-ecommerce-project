@@ -10,6 +10,8 @@ import OrdersPage from "../pages/orders/OrdersPage";
 import OrderDetailPage from "../pages/orders/OrderDetailPage";
 import PaymentSuccess from "../pages/payment/PaymentSuccess";
 import PaymentFailed from "../pages/payment/PaymentFailed";
+import ProfilePage from "../pages/profile/ProfilePage";
+import ChangePassword from "../pages/profile/ChangePassword";
 import Login from "../components/Login";
 import Register from "../components/Register";
 
@@ -57,6 +59,14 @@ const router = createBrowserRouter([
       {
         path: "/payment/failed",
         element: <PaymentFailed></PaymentFailed>,
+      },
+      {
+        path: "/profile",
+        element: <ProfilePage></ProfilePage>,
+      },
+      {
+        path: "/profile/password",
+        element: <ChangePassword></ChangePassword>,
       },
     ],
   },

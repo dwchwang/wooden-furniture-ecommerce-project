@@ -1,8 +1,19 @@
 import multer from "multer";
-import { storage } from "../utils/cloudinary.util.js";
 import { ApiError } from "../utils/api-error.js";
 
-// Configure multer with Cloudinary storage
+// Configure disk storage (save to temp folder first)
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, './public/temp')
+  },
+  filename: function (req, file, cb) {
+    // Use original filename with timestamp to avoid conflicts
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    cb(null, uniqueSuffix + '-' + file.originalname)
+  }
+});
+
+// Configure multer with disk storage
 const upload = multer({
   storage: storage,
   limits: {

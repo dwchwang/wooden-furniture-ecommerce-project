@@ -6,8 +6,10 @@ import {
   getCurrentUser,
   updateUserProfile,
   changePassword,
+  updateUserAvatar,
 } from "../controllers/user.controller.js";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
+import { uploadSingle } from "../middlewares/upload.middleware.js";
 
 const router = express.Router();
 
@@ -20,5 +22,6 @@ router.post("/logout", verifyJWT, logoutUser);
 router.get("/me", verifyJWT, getCurrentUser);
 router.patch("/update-profile", verifyJWT, updateUserProfile);
 router.patch("/change-password", verifyJWT, changePassword);
+router.patch("/avatar", verifyJWT, uploadSingle("avatar"), updateUserAvatar);
 
 export default router;

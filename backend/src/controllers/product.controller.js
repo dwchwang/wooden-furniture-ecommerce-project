@@ -124,9 +124,12 @@ const getAllProducts = asyncHandler(async (req, res) => {
     if (maxPrice) variantFilter.price.$lte = Number(maxPrice);
   }
 
-  // Search by name or description
+  // Search by name or description using regex (case-insensitive)
   if (search) {
-    filter.$text = { $search: search };
+    filter.$or = [
+      { name: { $regex: search, $options: 'i' } },
+      { description: { $regex: search, $options: 'i' } }
+    ];
   }
 
   // Get product IDs that match variant filters

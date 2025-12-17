@@ -1,5 +1,10 @@
 import { v2 as cloudinary } from "cloudinary";
 import { CloudinaryStorage } from "multer-storage-cloudinary";
+import fs from 'fs';
+import dotenv from 'dotenv';
+
+// Load environment variables
+dotenv.config();
 
 // Configure Cloudinary
 cloudinary.config({
@@ -8,7 +13,7 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-// Create storage for multer
+// Create storage for multer (legacy - keeping for compatibility)
 const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: {
@@ -18,7 +23,33 @@ const storage = new CloudinaryStorage({
   },
 });
 
-// Upload single image
+// Upload file from local path to Cloudinary
+const uploadOnCloudinary = async (localFilePath) => {
+  try {
+    if (!localFilePath) return null;
+    
+    const response = await cloudinary.uploader.upload(
+      localFilePath, {
+        resource_type: 'auto',
+        folder: 'furniture-ecommerce'
+      }
+    );
+    
+    // Once the file is uploaded, delete it from our server
+    fs.unlinkSync(localFilePath);
+    
+    return response;
+  } catch (error) {
+    console.error('Error uploading file to Cloudinary:', error);
+    // Delete local file even if upload fails
+    if (fs.existsSync(localFilePath)) {
+      fs.unlinkSync(localFilePath);
+    }
+    return null;
+  }
+};
+
+// Upload single image (legacy)
 const uploadImage = async (file) => {
   try {
     const result = await cloudinary.uploader.upload(file, {
@@ -49,9 +80,11 @@ const uploadMultipleImages = async (files) => {
 const deleteImage = async (publicId) => {
   try {
     const result = await cloudinary.uploader.destroy(publicId);
+    console.log("🚀 ~ deleteFromCloudinary. PublicId", publicId);
     return result;
   } catch (error) {
-    throw new Error(`Image deletion failed: ${error.message}`);
+    console.log('Error deleting file from Cloudinary:', error);
+    return null;
   }
 };
 
@@ -69,6 +102,7 @@ const deleteMultipleImages = async (publicIds) => {
 export {
   cloudinary,
   storage,
+  uploadOnCloudinary,
   uploadImage,
   uploadMultipleImages,
   deleteImage,

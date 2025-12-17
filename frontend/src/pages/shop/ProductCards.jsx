@@ -50,17 +50,14 @@ const ProductCards = ({ products }) => {
               />
             </Link>
 
-            {/* Add to cart button - top right */}
+            {/* View detail button - top right */}
             <div className="absolute top-3 right-3">
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleAddToCart(product);
-                }}
+              <Link
+                to={`/shop/${product._id}`}
                 className="w-10 h-10 flex items-center justify-center bg-[#a67c52] text-white rounded-full hover:bg-[#8b653d] transition-colors shadow-lg"
               >
                 <i className="ri-shopping-cart-line text-lg"></i>
-              </button>
+              </Link>
             </div>
           </div>
 

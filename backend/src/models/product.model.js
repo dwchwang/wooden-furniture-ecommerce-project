@@ -124,17 +124,27 @@ productSchema.pre("save", async function (next) {
   next();
 });
 
-// Indexes for better query performance
-productSchema.index({ name: "text", description: "text" });
-productSchema.index({ category: 1, isActive: 1 });
-productSchema.index({ type: 1, isActive: 1 });
-productSchema.index({ category: 1, type: 1, isActive: 1 });
-productSchema.index({ isFeatured: 1, isActive: 1 });
-productSchema.index({ averageRating: -1 });
+// Indexes
+productSchema.index({ slug: 1 });
+productSchema.index({ category: 1 });
+productSchema.index({ isActive: 1 });
+productSchema.index({ isFeatured: 1 });
+productSchema.index({ basePrice: 1 });
+productSchema.index({ createdAt: -1 });
 
-// Virtual for getting variants
+// Text index for search
+productSchema.index({ name: 'text', description: 'text' });
+
+// Virtual for variants
 productSchema.virtual("variants", {
   ref: "ProductVariant",
+  localField: "_id",
+  foreignField: "product",
+});
+
+// Virtual for reviews
+productSchema.virtual("reviews", {
+  ref: "Review",
   localField: "_id",
   foreignField: "product",
 });
