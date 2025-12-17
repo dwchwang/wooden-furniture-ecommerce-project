@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchProducts } from "../../redux/features/products/productsSlice";
 import { fetchCategories } from "../../redux/features/categories/categoriesSlice";
@@ -7,6 +8,7 @@ import ShopFiltering from "./ShopFiltering";
 
 const ShopPage = () => {
   const dispatch = useDispatch();
+  const [searchParams] = useSearchParams();
   const { products, loading } = useSelector((state) => state.products);
   const { categories } = useSelector((state) => state.categories);
 
@@ -18,6 +20,23 @@ const ShopPage = () => {
     material: "",
     sort: "-createdAt",
   });
+
+  // Read URL query parameters on mount
+  useEffect(() => {
+    const typeFromUrl = searchParams.get('type');
+    const categoryFromUrl = searchParams.get('category');
+
+    if (typeFromUrl || categoryFromUrl) {
+      setFiltersState(prev => ({
+        ...prev,
+        type: typeFromUrl || "",
+        category: categoryFromUrl || ""
+      }));
+
+      // Scroll to top when navigating with filters
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }, [searchParams]);
 
   // Fetch categories on mount
   useEffect(() => {

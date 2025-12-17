@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchProductById, clearCurrentProduct } from "../../../redux/features/products/productsSlice";
 import { addToCart } from "../../../redux/features/cart/cartSlice";
 import RatingStars from "../../../components/RatingStars";
+import ProductReviews from "../../../components/ProductReviews";
 import { formatPrice, getImageUrl } from "../../../utils/helpers";
 import { toast } from "react-toastify";
 
@@ -202,10 +203,9 @@ const SingleProduct = () => {
         </div>
       </section>
 
-      {/* display reviews */}
+      {/* Product Reviews */}
       <section className="section__container mt-8">
-        <h3 className="text-2xl font-semibold mb-4">Customer Reviews</h3>
-        <p className="text-gray-600">Reviews will be displayed here</p>
+        <ProductReviews productId={product._id} />
       </section>
     </>
   );

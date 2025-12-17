@@ -1,14 +1,18 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { orderService } from "../../services/orderService";
+import { reviewService } from "../../services/reviewService";
 import { formatPrice, formatDate } from "../../utils/helpers";
 import { toast } from "react-toastify";
+import QuickReviewModal from "../../components/QuickReviewModal";
 
 const OrderDetailPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [reviewModal, setReviewModal] = useState({ show: false, productId: null, productName: null });
+  const [reviewedProducts, setReviewedProducts] = useState(new Set());
 
   useEffect(() => {
     fetchOrderDetail();
@@ -18,12 +22,60 @@ const OrderDetailPage = () => {
     try {
       setLoading(true);
       const response = await orderService.getOrderById(id);
-      setOrder(response.data.order);
+      const orderData = response.data.order;
+      setOrder(orderData);
+
+      // Fetch reviews for this order to check which products have been reviewed
+      if (orderData) {
+        await fetchReviewedProducts(orderData);
+      }
     } catch (error) {
       toast.error(error.message || "Failed to fetch order details");
       navigate("/orders");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchReviewedProducts = async (orderData) => {
+    try {
+      // For each product in the order, check if it has been reviewed
+      const productIds = orderData.items.map(item => item.product?._id).filter(Boolean);
+      const reviewed = new Set();
+
+      console.log('🔍 Checking reviewed products for order:', orderData._id);
+      console.log('📦 Product IDs in order:', productIds);
+
+      for (const productId of productIds) {
+        try {
+          const response = await reviewService.getProductReviews(productId, { limit: 100 });
+          const reviews = response?.data?.reviews || [];
+
+          console.log(`📝 Reviews for product ${productId}:`, reviews);
+
+          // Check if this product has been reviewed in this order
+          // We only need to check order ID since each user can only have one review per product per order
+          const userReview = reviews.find(review => {
+            const isMatch = review.order === orderData._id;
+            console.log(`  Checking review: order=${review.order}, currentOrder=${orderData._id}, match=${isMatch}`);
+            return isMatch;
+          });
+
+          if (userReview) {
+            console.log(`✅ Found review for product ${productId}`, userReview);
+            reviewed.add(productId);
+          } else {
+            console.log(`❌ No review found for product ${productId}`);
+          }
+        } catch (error) {
+          console.error(`Failed to fetch reviews for product ${productId}:`, error);
+        }
+      }
+
+      console.log('✨ Final reviewedProducts Set:', Array.from(reviewed));
+      setReviewedProducts(reviewed);
+    } catch (error) {
+      console.error('Failed to fetch reviewed products:', error);
     }
   };
 
@@ -224,6 +276,30 @@ const OrderDetailPage = () => {
                         {formatPrice(item.price * item.quantity)}
                       </p>
                     </div>
+                    {/* Review Button for Delivered Orders */}
+                    {order.orderStatus === "delivered" && (
+                      reviewedProducts.has(item.product?._id) ? (
+                        <button
+                          disabled
+                          className="mt-4 px-4 py-2 bg-green-100 text-green-700 text-sm rounded-lg cursor-not-allowed flex items-center gap-2 border border-green-200"
+                        >
+                          <i className="ri-checkbox-circle-fill"></i>
+                          Đã đánh giá
+                        </button>
+                      ) : (
+                        <button
+                          onClick={() => setReviewModal({
+                            show: true,
+                            productId: item.product?._id,
+                            productName: item.product?.name,
+                          })}
+                          className="mt-4 px-4 py-2 bg-[#a67c52] text-white text-sm rounded-lg hover:bg-[#8b653d] transition-colors flex items-center gap-2"
+                        >
+                          <i className="ri-star-line"></i>
+                          Đánh giá
+                        </button>
+                      )
+                    )}
                   </div>
                 </div>
               ))}
@@ -330,6 +406,23 @@ const OrderDetailPage = () => {
           </div>
         </div>
       </div>
+
+      {/* Quick Review Modal */}
+      {reviewModal.show && (
+        <QuickReviewModal
+          productId={reviewModal.productId}
+          productName={reviewModal.productName}
+          orderId={order._id}
+          onClose={() => setReviewModal({ show: false, productId: null, productName: null })}
+          onSuccess={async () => {
+            toast.success('Cảm ơn bạn đã đánh giá!');
+            // Refresh reviewed products to hide the button
+            if (order) {
+              await fetchReviewedProducts(order);
+            }
+          }}
+        />
+      )}
     </div>
   );
 };

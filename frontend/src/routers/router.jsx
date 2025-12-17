@@ -12,6 +12,7 @@ import PaymentSuccess from "../pages/payment/PaymentSuccess";
 import PaymentFailed from "../pages/payment/PaymentFailed";
 import ProfilePage from "../pages/profile/ProfilePage";
 import ChangePassword from "../pages/profile/ChangePassword";
+import ContactPage from "../pages/contact/ContactPage";
 import Login from "../components/Login";
 import Register from "../components/Register";
 
@@ -67,6 +68,10 @@ const router = createBrowserRouter([
       {
         path: "/profile/password",
         element: <ChangePassword></ChangePassword>,
+      },
+      {
+        path: "/contact",
+        element: <ContactPage></ContactPage>,
       },
     ],
   },

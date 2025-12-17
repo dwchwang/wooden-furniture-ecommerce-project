@@ -125,16 +125,24 @@ const Navbar = () => {
                 {/* User Avatar */}
                 <Link to="/profile" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
                   {user.avatar ? (
-                    <div className="w-10 h-10 flex-shrink-0">
+                    <div className="w-10 h-10 flex-shrink-0 rounded-full overflow-hidden border-2 border-[#a67c52]">
                       <img
                         src={user.avatar}
                         alt={user.fullName}
-                        className="w-full h-full rounded-full object-cover border-2 border-[#a67c52]"
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                          e.target.onerror = null; // Prevent infinite loop
+                          e.target.src = "/user.png"; // Fallback to default avatar
+                        }}
                       />
                     </div>
                   ) : (
-                    <div className="w-10 h-10 flex-shrink-0 rounded-full bg-[#a67c52] flex items-center justify-center text-white font-semibold border-2 border-[#a67c52]">
-                      {user.fullName?.charAt(0).toUpperCase() || 'U'}
+                    <div className="w-10 h-10 flex-shrink-0 rounded-full overflow-hidden border-2 border-[#a67c52]">
+                      <img
+                        src="/user.png"
+                        alt="Default Avatar"
+                        className="w-full h-full object-cover"
+                      />
                     </div>
                   )}
                   <span className="hidden md:block text-sm whitespace-nowrap">
