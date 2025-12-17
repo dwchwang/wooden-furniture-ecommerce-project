@@ -278,7 +278,7 @@ const ContactPage = () => {
             <div className="mt-8 bg-white rounded-xl shadow-md overflow-hidden">
               <div className="h-96 bg-gray-200 relative">
                 <iframe
-                  src="https://www.google.com/maps/embed/v1/place?key=AIzaSyBFw0Qbyq9zTFTd-tUY6dZWTgaQzuU17R8&q=V8X2%2B923%2C+Đô+Lương%2C+Nghệ+An%2C+Vietnam&zoom=15"
+                  src="https://www.google.com/maps?q=V8X2+923,+Đô+Lương,+Nghệ+An,+Vietnam&output=embed"
                   width="100%"
                   height="100%"
                   style={{ border: 0 }}

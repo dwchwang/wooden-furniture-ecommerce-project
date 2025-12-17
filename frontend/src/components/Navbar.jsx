@@ -63,17 +63,17 @@ const Navbar = () => {
             </li>
             <li className="link">
               <Link
-                to="/pages"
-                className={`font-medium hover:text-[#a67c52] transition-colors ${location.pathname === '/pages' ? 'text-[#a67c52] border-b-2 border-[#a67c52]' : ''
+                to="/blogs"
+                className={`font-medium hover:text-[#a67c52] transition-colors ${location.pathname === '/blogs' ? 'text-[#a67c52] border-b-2 border-[#a67c52]' : ''
                   }`}
                 style={{
-                  color: location.pathname === '/pages' ? '#a67c52' : '#374151',
+                  color: location.pathname === '/blogs' ? '#a67c52' : '#374151',
                   fontWeight: '500',
                   fontSize: '15px',
                   paddingBottom: '4px'
                 }}
               >
-                Trang
+                Bài viết
               </Link>
             </li>
             <li className="link">
