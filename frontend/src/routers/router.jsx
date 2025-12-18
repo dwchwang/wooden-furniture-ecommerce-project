@@ -22,6 +22,10 @@ import AdminBlogsPage from "../pages/admin/blogs/AdminBlogsPage";
 import BlogFormPage from "../pages/admin/blogs/BlogFormPage";
 import AdminOrdersPage from "../pages/admin/orders/AdminOrdersPage";
 import AdminOrderDetailPage from "../pages/admin/orders/AdminOrderDetailPage";
+import AdminProductsPage from "../pages/admin/products/AdminProductsPage";
+import ProductFormPage from "../pages/admin/products/ProductFormPage";
+import ProductDetailPage from "../pages/admin/products/ProductDetailPage";
+import InventoryPage from "../pages/admin/inventory/InventoryPage";
 import Login from "../components/Login";
 import Register from "../components/Register";
 
@@ -127,6 +131,26 @@ const router = createBrowserRouter([
       {
         path: "orders/:id",
         element: <AdminOrderDetailPage />,
+      },
+      {
+        path: "products",
+        element: <AdminProductsPage />,
+      },
+      {
+        path: "products/new",
+        element: <ProductFormPage />,
+      },
+      {
+        path: "products/:id",
+        element: <ProductDetailPage />,
+      },
+      {
+        path: "products/edit/:id",
+        element: <ProductFormPage />,
+      },
+      {
+        path: "inventory",
+        element: <InventoryPage />,
       },
     ],
   },

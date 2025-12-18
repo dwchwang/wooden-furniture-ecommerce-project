@@ -88,7 +88,7 @@ const getAllProducts = asyncHandler(async (req, res) => {
     maxPrice,
     search,
     isFeatured,
-    isActive = true,
+    isActive,
     sortBy = "createdAt",
     sortOrder = "desc",
   } = req.query;
@@ -162,11 +162,17 @@ const getAllProducts = asyncHandler(async (req, res) => {
   // Get total count
   const total = await Product.countDocuments(filter);
 
+  // Add variant count to each product
+  const productsWithCount = products.map(product => ({
+    ...product.toObject(),
+    variantCount: product.variants?.length || 0
+  }));
+
   return res.status(200).json(
     new ApiResponse(
       200,
       {
-        products,
+        products: productsWithCount,
         pagination: {
           page: Number(page),
           limit: Number(limit),

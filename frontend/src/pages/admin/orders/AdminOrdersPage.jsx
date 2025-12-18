@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import axios from 'axios';
 import { formatDistanceToNow } from 'date-fns';
 import { vi } from 'date-fns/locale';
@@ -8,12 +8,13 @@ import api from '../../../services/api';
 
 const AdminOrdersPage = () => {
   const { user } = useSelector((state) => state.auth);
+  const [searchParams, setSearchParams] = useSearchParams();
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filters, setFilters] = useState({
     page: 1,
     limit: 10,
-    orderStatus: '',
+    orderStatus: searchParams.get('status') || '',
     search: ''
   });
   const [pagination, setPagination] = useState({
@@ -61,7 +62,7 @@ const AdminOrdersPage = () => {
     };
     const config = statusConfig[status] || statusConfig.pending;
     return (
-      <span className={`px-2 py-1 text-xs font-medium ${config.bg} ${config.text} rounded-full`}>
+      <span className={`px - 2 py - 1 text - xs font - medium ${ config.bg } ${ config.text } rounded - full`}>
         {config.label}
       </span>
     );
@@ -211,7 +212,7 @@ const AdminOrdersPage = () => {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                         <Link
-                          to={`/admin/orders/${order._id}`}
+                          to={`/ admin / orders / ${ order._id } `}
                           className="text-[#a67c52] hover:text-[#8b653d]"
                         >
                           <i className="ri-eye-line text-lg"></i>
@@ -242,10 +243,11 @@ const AdminOrdersPage = () => {
                     <button
                       key={index + 1}
                       onClick={() => handlePageChange(index + 1)}
-                      className={`px-4 py-2 rounded-lg ${pagination.currentPage === index + 1
-                        ? 'bg-[#a67c52] text-white'
-                        : 'border border-gray-300 hover:bg-gray-50'
-                        }`}
+                      className={`px - 4 py - 2 rounded - lg ${
+  pagination.currentPage === index + 1
+  ? 'bg-[#a67c52] text-white'
+  : 'border border-gray-300 hover:bg-gray-50'
+} `}
                     >
                       {index + 1}
                     </button>

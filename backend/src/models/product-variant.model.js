@@ -10,7 +10,6 @@ const productVariantSchema = new mongoose.Schema(
     },
     sku: {
       type: String,
-      required: [true, "SKU is required"],
       unique: true,
       uppercase: true,
       trim: true,
