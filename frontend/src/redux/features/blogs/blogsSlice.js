@@ -69,8 +69,8 @@ const blogsSlice = createSlice({
       })
       .addCase(fetchBlogs.fulfilled, (state, action) => {
         state.loading = false;
-        state.blogs = action.payload?.data?.blogs || [];
-        state.pagination = action.payload?.data?.pagination || state.pagination;
+        state.blogs = action.payload?.blogs || [];
+        state.pagination = action.payload?.pagination || state.pagination;
       })
       .addCase(fetchBlogs.rejected, (state, action) => {
         state.loading = false;
@@ -84,7 +84,7 @@ const blogsSlice = createSlice({
       })
       .addCase(fetchBlogBySlug.fulfilled, (state, action) => {
         state.loading = false;
-        state.currentBlog = action.payload?.data || null;
+        state.currentBlog = action.payload || null;
       })
       .addCase(fetchBlogBySlug.rejected, (state, action) => {
         state.loading = false;
@@ -94,7 +94,7 @@ const blogsSlice = createSlice({
       // Toggle like
       .addCase(toggleBlogLike.fulfilled, (state, action) => {
         if (state.currentBlog && state.currentBlog._id === action.payload.blogId) {
-          state.currentBlog.likes = action.payload.data?.likes || 0;
+          state.currentBlog.likes = action.payload.likes || 0;
         }
       });
   }

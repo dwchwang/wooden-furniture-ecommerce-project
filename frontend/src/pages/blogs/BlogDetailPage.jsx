@@ -1,17 +1,14 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useParams, Link, useNavigate } from 'react-router-dom';
-import { fetchBlogBySlug, toggleBlogLike, clearCurrentBlog } from '../../redux/features/blogs/blogsSlice';
+import { useParams, Link } from 'react-router-dom';
+import { fetchBlogBySlug, clearCurrentBlog } from '../../redux/features/blogs/blogsSlice';
 import { formatDistanceToNow } from 'date-fns';
 import { vi } from 'date-fns/locale';
-import { toast } from 'react-toastify';
 
 const BlogDetailPage = () => {
   const { slug } = useParams();
   const dispatch = useDispatch();
-  const navigate = useNavigate();
   const { currentBlog, loading } = useSelector((state) => state.blogs);
-  const { isAuthenticated, user } = useSelector((state) => state.auth);
 
   useEffect(() => {
     dispatch(fetchBlogBySlug(slug));
@@ -20,22 +17,6 @@ const BlogDetailPage = () => {
       dispatch(clearCurrentBlog());
     };
   }, [dispatch, slug]);
-
-  const handleLike = async () => {
-    if (!isAuthenticated) {
-      toast.info('Vui lòng đăng nhập để thích bài viết');
-      navigate('/login');
-      return;
-    }
-
-    try {
-      await dispatch(toggleBlogLike(currentBlog._id)).unwrap();
-    } catch (error) {
-      toast.error('Có lỗi xảy ra');
-    }
-  };
-
-  const isLiked = currentBlog?.likes?.includes(user?._id);
 
   if (loading) {
     return (
@@ -125,14 +106,6 @@ const BlogDetailPage = () => {
                   <i className="ri-eye-line"></i>
                   {currentBlog.views} lượt xem
                 </span>
-                <button
-                  onClick={handleLike}
-                  className={`flex items-center gap-1 transition-colors ${isLiked ? 'text-red-500' : 'hover:text-red-500'
-                    }`}
-                >
-                  <i className={isLiked ? 'ri-heart-fill' : 'ri-heart-line'}></i>
-                  {currentBlog.likes?.length || 0}
-                </button>
               </div>
             </div>
 

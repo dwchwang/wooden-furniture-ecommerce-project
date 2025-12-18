@@ -15,6 +15,13 @@ import ChangePassword from "../pages/profile/ChangePassword";
 import ContactPage from "../pages/contact/ContactPage";
 import BlogListPage from "../pages/blogs/BlogListPage";
 import BlogDetailPage from "../pages/blogs/BlogDetailPage";
+import AdminLayout from "../components/admin/AdminLayout";
+import ProtectedRoute from "../components/admin/ProtectedRoute";
+import AdminDashboard from "../pages/admin/dashboard/AdminDashboard";
+import AdminBlogsPage from "../pages/admin/blogs/AdminBlogsPage";
+import BlogFormPage from "../pages/admin/blogs/BlogFormPage";
+import AdminOrdersPage from "../pages/admin/orders/AdminOrdersPage";
+import AdminOrderDetailPage from "../pages/admin/orders/AdminOrderDetailPage";
 import Login from "../components/Login";
 import Register from "../components/Register";
 
@@ -82,6 +89,44 @@ const router = createBrowserRouter([
       {
         path: "/blogs/:slug",
         element: <BlogDetailPage></BlogDetailPage>,
+      },
+    ],
+  },
+  {
+    path: "/admin",
+    element: (
+      <ProtectedRoute allowedRoles={['admin', 'staff']}>
+        <AdminLayout />
+      </ProtectedRoute>
+    ),
+    children: [
+      {
+        path: "",
+        element: <AdminDashboard />,
+      },
+      {
+        path: "dashboard",
+        element: <AdminDashboard />,
+      },
+      {
+        path: "blogs",
+        element: <AdminBlogsPage />,
+      },
+      {
+        path: "blogs/new",
+        element: <BlogFormPage />,
+      },
+      {
+        path: "blogs/edit/:id",
+        element: <BlogFormPage />,
+      },
+      {
+        path: "orders",
+        element: <AdminOrdersPage />,
+      },
+      {
+        path: "orders/:id",
+        element: <AdminOrderDetailPage />,
       },
     ],
   },

@@ -34,11 +34,15 @@ api.interceptors.response.use(
     
     // Handle specific error cases
     if (error.response?.status === 401) {
-      // Unauthorized - clear token and redirect to login
-      localStorage.removeItem('accessToken');
-      localStorage.removeItem('refreshToken');
-      toast.error('Session expired. Please login again.');
-      window.location.href = '/login';
+      // Don't auto-redirect if it's a /users/me request (auth check on page load)
+      if (!error.config?.url?.includes('/users/me')) {
+        // Unauthorized - clear token and redirect to login
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('refreshToken');
+        localStorage.removeItem('user');
+        toast.error('Session expired. Please login again.');
+        window.location.href = '/login';
+      }
     } else if (error.response?.status === 403) {
       toast.error('You do not have permission to perform this action.');
     } else if (error.response?.status === 404) {

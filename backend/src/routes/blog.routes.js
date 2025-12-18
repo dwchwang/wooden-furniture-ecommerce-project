@@ -1,12 +1,15 @@
 import express from 'express';
 import * as blogController from '../controllers/blog.controller.js';
-import { verifyJWT } from '../middlewares/auth.middleware.js';
+import { verifyJWT, optionalJWT } from '../middlewares/auth.middleware.js';
 
 const router = express.Router();
 
+// Admin routes (must be before public routes to avoid slug conflict)
+router.get('/admin/all', verifyJWT, blogController.getAllBlogsForAdmin);
+
 // Public routes
 router.get('/', blogController.getBlogs);
-router.get('/:slug', blogController.getBlogBySlug);
+router.get('/:slug', optionalJWT, blogController.getBlogBySlug); // Optional auth to allow preview
 
 // Protected routes (require authentication)
 router.post('/:id/like', verifyJWT, blogController.toggleLike);

@@ -46,3 +46,34 @@ export const verifyAdmin = asyncHandler(async (req, res, next) => {
   }
   next();
 });
+
+// Optional JWT verification - attach user if token exists, but don't block if missing
+export const optionalJWT = asyncHandler(async (req, res, next) => {
+  try {
+    const token =
+      req.cookies?.accessToken ||
+      req.header("Authorization")?.replace("Bearer ", "");
+
+    if (token) {
+      const decodedToken = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+      const user = await User.findById(decodedToken._id).select(
+        "-password -refreshToken"
+      );
+
+      if (user && user.isActive) {
+        req.user = user;
+      }
+    }
+  } catch (error) {
+    // Silently fail - user just won't be attached
+  }
+  next();
+});
+
+// Middleware to check if user is admin or staff
+export const verifyAdminOrStaff = asyncHandler(async (req, res, next) => {
+  if (req.user?.role !== "admin" && req.user?.role !== "staff") {
+    throw new ApiError(403, "Access denied. Admin or Staff only.");
+  }
+  next();
+});

@@ -107,17 +107,36 @@ const Navbar = () => {
                 <i className="ri-search-line"></i>
               </Link>
             </span>
-            <span>
-              <button
-                className="cursor-pointer hover:text-primary"
-                onClick={handleCartToggle}
-              >
-                <i className="ri-shopping-bag-line"></i>
-                <sup className="text-sm inline-block w-[20px] h-[20px] text-white rounded-full bg-primary text-center">
-                  {products.length}
-                </sup>
-              </button>
-            </span>
+
+            {/* Cart - only for customers */}
+            {(!isAuthenticated || !user || (user.role !== 'admin' && user.role !== 'staff')) && (
+              <span>
+                <button
+                  className="cursor-pointer hover:text-primary"
+                  onClick={handleCartToggle}
+                >
+                  <i className="ri-shopping-bag-line"></i>
+                  <sup className="text-sm inline-block w-[20px] h-[20px] text-white rounded-full bg-primary text-center">
+                    {products.length}
+                  </sup>
+                </button>
+              </span>
+            )}
+
+            {/* Dashboard icon for admin/staff OR Orders icon for customers */}
+            {isAuthenticated && user && (
+              <span>
+                {user.role === 'admin' || user.role === 'staff' ? (
+                  <Link to="/admin" className="hover:text-primary" title="Dashboard">
+                    <i className="ri-dashboard-line"></i>
+                  </Link>
+                ) : (
+                  <Link to="/orders" className="hover:text-primary" title="Đơn hàng">
+                    <i className="ri-file-list-3-line"></i>
+                  </Link>
+                )}
+              </span>
+            )}
 
             {/* User section */}
             {isAuthenticated && user ? (
@@ -169,14 +188,28 @@ const Navbar = () => {
                       <i className="ri-user-line mr-2"></i>
                       Hồ sơ
                     </Link>
-                    <Link
-                      to="/orders"
-                      className="block px-4 py-2 text-sm hover:bg-gray-100"
-                      onClick={() => setShowUserMenu(false)}
-                    >
-                      <i className="ri-shopping-bag-line mr-2"></i>
-                      Đơn hàng
-                    </Link>
+
+                    {/* Show Dashboard for admin/staff, Orders for customers */}
+                    {user.role === 'admin' || user.role === 'staff' ? (
+                      <Link
+                        to="/admin"
+                        className="block px-4 py-2 text-sm hover:bg-gray-100"
+                        onClick={() => setShowUserMenu(false)}
+                      >
+                        <i className="ri-dashboard-line mr-2"></i>
+                        Dashboard
+                      </Link>
+                    ) : (
+                      <Link
+                        to="/orders"
+                        className="block px-4 py-2 text-sm hover:bg-gray-100"
+                        onClick={() => setShowUserMenu(false)}
+                      >
+                        <i className="ri-shopping-bag-line mr-2"></i>
+                        Đơn hàng
+                      </Link>
+                    )}
+
                     <hr className="my-2" />
                     <button
                       onClick={handleLogout}

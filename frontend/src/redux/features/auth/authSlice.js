@@ -62,8 +62,8 @@ export const updateUserProfile = createAsyncThunk(
 );
 
 const initialState = {
-  user: null,
-  isAuthenticated: false,
+  user: JSON.parse(localStorage.getItem('user')) || null,
+  isAuthenticated: !!localStorage.getItem('user'),
   loading: false,
   error: null,
 };
@@ -78,6 +78,11 @@ const authSlice = createSlice({
     setUser: (state, action) => {
       state.user = action.payload;
       state.isAuthenticated = !!action.payload;
+      if (action.payload) {
+        localStorage.setItem('user', JSON.stringify(action.payload));
+      } else {
+        localStorage.removeItem('user');
+      }
     },
   },
   extraReducers: (builder) => {
@@ -91,6 +96,7 @@ const authSlice = createSlice({
         state.loading = false;
         state.user = action.payload;
         state.isAuthenticated = true;
+        localStorage.setItem('user', JSON.stringify(action.payload));
       })
       .addCase(registerUser.rejected, (state, action) => {
         state.loading = false;
@@ -105,6 +111,7 @@ const authSlice = createSlice({
         state.loading = false;
         state.user = action.payload;
         state.isAuthenticated = true;
+        localStorage.setItem('user', JSON.stringify(action.payload));
       })
       .addCase(loginUser.rejected, (state, action) => {
         state.loading = false;
@@ -116,6 +123,7 @@ const authSlice = createSlice({
         state.isAuthenticated = false;
         state.loading = false;
         state.error = null;
+        localStorage.removeItem('user');
       })
       // Fetch current user
       .addCase(fetchCurrentUser.pending, (state) => {
@@ -125,11 +133,13 @@ const authSlice = createSlice({
         state.loading = false;
         state.user = action.payload;
         state.isAuthenticated = true;
+        localStorage.setItem('user', JSON.stringify(action.payload));
       })
       .addCase(fetchCurrentUser.rejected, (state) => {
         state.loading = false;
         state.user = null;
         state.isAuthenticated = false;
+        localStorage.removeItem('user');
       })
       // Update profile
       .addCase(updateUserProfile.fulfilled, (state, action) => {

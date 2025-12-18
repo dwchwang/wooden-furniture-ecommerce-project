@@ -86,8 +86,8 @@ const BlogListPage = () => {
                   <button
                     onClick={() => handleCategoryFilter('')}
                     className={`w-full text-left px-3 py-2 rounded-lg transition-colors ${!filters.category
-                        ? 'bg-[#a67c52] text-white'
-                        : 'text-gray-700 hover:bg-gray-100'
+                      ? 'bg-[#a67c52] text-white'
+                      : 'text-gray-700 hover:bg-gray-100'
                       }`}
                   >
                     Tất cả
@@ -97,8 +97,8 @@ const BlogListPage = () => {
                       key={category}
                       onClick={() => handleCategoryFilter(category)}
                       className={`w-full text-left px-3 py-2 rounded-lg transition-colors ${filters.category === category
-                          ? 'bg-[#a67c52] text-white'
-                          : 'text-gray-700 hover:bg-gray-100'
+                        ? 'bg-[#a67c52] text-white'
+                        : 'text-gray-700 hover:bg-gray-100'
                         }`}
                     >
                       {category}
@@ -173,10 +173,6 @@ const BlogListPage = () => {
                             <i className="ri-eye-line"></i>
                             {blog.views}
                           </span>
-                          <span className="flex items-center gap-1">
-                            <i className="ri-heart-line"></i>
-                            {blog.likes?.length || 0}
-                          </span>
                         </div>
                       </div>
                     </Link>
@@ -198,8 +194,8 @@ const BlogListPage = () => {
                         key={index + 1}
                         onClick={() => handlePageChange(index + 1)}
                         className={`px-4 py-2 rounded-lg ${pagination.currentPage === index + 1
-                            ? 'bg-[#a67c52] text-white'
-                            : 'border border-gray-300 hover:bg-gray-50'
+                          ? 'bg-[#a67c52] text-white'
+                          : 'border border-gray-300 hover:bg-gray-50'
                           }`}
                       >
                         {index + 1}

@@ -7,17 +7,23 @@ import { toast } from "react-toastify";
 const Login = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { loading, error, isAuthenticated } = useSelector((state) => state.auth);
+  const { loading, error, isAuthenticated, user } = useSelector((state) => state.auth);
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   useEffect(() => {
-    if (isAuthenticated) {
-      toast.success("Login successful!");
-      navigate("/");
+    if (isAuthenticated && user) {
+      toast.success("Đăng nhập thành công!");
+
+      // Redirect based on role
+      if (user.role === 'admin' || user.role === 'staff') {
+        navigate("/admin");
+      } else {
+        navigate("/");
+      }
     }
-  }, [isAuthenticated, navigate]);
+  }, [isAuthenticated, user, navigate]);
 
   useEffect(() => {
     if (error) {

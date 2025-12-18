@@ -238,10 +238,11 @@ const getOrderById = asyncHandler(async (req, res) => {
     throw new ApiError(404, "Order not found");
   }
 
-  // Check authorization (user can only view their own orders, admin can view all)
+  // Check authorization (user can only view their own orders, admin/staff can view all)
   if (
     order.user._id.toString() !== req.user._id.toString() &&
-    req.user.role !== "admin"
+    req.user.role !== "admin" &&
+    req.user.role !== "staff"
   ) {
     throw new ApiError(403, "Not authorized to view this order");
   }
@@ -358,7 +359,8 @@ const cancelOrder = asyncHandler(async (req, res) => {
   // Check authorization
   if (
     order.user.toString() !== req.user._id.toString() &&
-    req.user.role !== "admin"
+    req.user.role !== "admin" &&
+    req.user.role !== "staff"
   ) {
     throw new ApiError(403, "Not authorized to cancel this order");
   }
