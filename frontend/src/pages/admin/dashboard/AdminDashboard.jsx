@@ -15,16 +15,20 @@ const AdminDashboard = () => {
     deliveredOrders: 0,
     totalRevenue: 0
   });
+  const [customersCount, setCustomersCount] = useState(0);
+  const [productsCount, setProductsCount] = useState(0);
+  const [recentOrders, setRecentOrders] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchOrderStats();
+    fetchDashboardData();
   }, []);
 
-  const fetchOrderStats = async () => {
+  const fetchDashboardData = async () => {
     try {
-      const response = await api.get('/orders/stats/overview');
-      const stats = response.data?.stats || {};
+      // Fetch order stats
+      const orderResponse = await api.get('/orders/stats/overview');
+      const stats = orderResponse.data?.stats || {};
       setOrderStats({
         totalOrders: stats.totalOrders || 0,
         pendingOrders: stats.pendingOrders || 0,
@@ -32,8 +36,35 @@ const AdminDashboard = () => {
         deliveredOrders: stats.deliveredOrders || 0,
         totalRevenue: stats.totalRevenue || 0
       });
+
+      // Fetch customers count
+      try {
+        const usersResponse = await api.get('/users/admin/all');
+        const customers = usersResponse.data?.users?.filter(u => u.role === 'customer') || [];
+        setCustomersCount(customers.length);
+      } catch (error) {
+        console.error('Error fetching customers:', error);
+      }
+
+      // Fetch products count
+      try {
+        const productsResponse = await api.get('/products');
+        const products = productsResponse.data?.products || [];
+        setProductsCount(products.length);
+      } catch (error) {
+        console.error('Error fetching products:', error);
+      }
+
+      // Fetch recent orders
+      try {
+        const ordersResponse = await api.get('/orders?page=1&limit=5');
+        const orders = ordersResponse.data?.orders || [];
+        setRecentOrders(orders);
+      } catch (error) {
+        console.error('Error fetching recent orders:', error);
+      }
     } catch (error) {
-      console.error('Error fetching stats:', error);
+      console.error('Error fetching dashboard data:', error);
     } finally {
       setLoading(false);
     }
@@ -46,24 +77,28 @@ const AdminDashboard = () => {
       value: orderStats.totalOrders.toLocaleString(),
       icon: 'ri-shopping-bag-line',
       color: 'bg-blue-500',
+      link: '/admin/orders'
     },
     {
       title: 'Doanh thu',
       value: `${orderStats.totalRevenue.toLocaleString('vi-VN')} đ`,
       icon: 'ri-money-dollar-circle-line',
       color: 'bg-green-500',
+      link: '/admin/reports'
     },
     {
       title: 'Khách hàng',
-      value: '0',
+      value: customersCount.toLocaleString(),
       icon: 'ri-user-line',
       color: 'bg-purple-500',
+      link: '/admin/users'
     },
     {
       title: 'Sản phẩm',
-      value: '0',
+      value: productsCount.toLocaleString(),
       icon: 'ri-product-hunt-line',
       color: 'bg-orange-500',
+      link: '/admin/products'
     }
   ];
 
@@ -129,16 +164,18 @@ const AdminDashboard = () => {
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         {stats.map((stat, index) => {
-          const CardWrapper = stat.filterStatus ? Link : 'div';
-          const cardProps = stat.filterStatus
-            ? { to: `/admin/orders?status=${stat.filterStatus}` }
-            : {};
+          const CardWrapper = (stat.link || stat.filterStatus) ? Link : 'div';
+          const cardProps = stat.link
+            ? { to: stat.link }
+            : stat.filterStatus
+              ? { to: `/admin/orders?status=${stat.filterStatus}` }
+              : {};
 
           return (
             <CardWrapper
               key={index}
               {...cardProps}
-              className={`bg-white rounded-xl shadow-md p-6 transition-all ${stat.filterStatus ? 'hover:shadow-lg hover:scale-105 cursor-pointer' : 'hover:shadow-lg'
+              className={`bg-white rounded-xl shadow-md p-6 transition-all ${(stat.link || stat.filterStatus) ? 'hover:shadow-lg hover:scale-105 cursor-pointer' : 'hover:shadow-lg'
                 }`}
             >
               <div className="flex items-center justify-between mb-4">
@@ -222,10 +259,54 @@ const AdminDashboard = () => {
               Xem tất cả →
             </Link>
           </div>
-          <div className="text-center py-8 text-gray-500">
-            <i className="ri-shopping-bag-line text-4xl mb-2"></i>
-            <p>Chưa có đơn hàng nào</p>
-          </div>
+          {recentOrders.length > 0 ? (
+            <div className="space-y-4">
+              {recentOrders.map((order) => {
+                const statusColors = {
+                  pending: 'bg-yellow-100 text-yellow-800',
+                  confirmed: 'bg-blue-100 text-blue-800',
+                  processing: 'bg-indigo-100 text-indigo-800',
+                  shipping: 'bg-purple-100 text-purple-800',
+                  delivered: 'bg-green-100 text-green-800',
+                  cancelled: 'bg-red-100 text-red-800'
+                };
+                const statusLabels = {
+                  pending: 'Chờ xử lý',
+                  confirmed: 'Đã xác nhận',
+                  processing: 'Đang xử lý',
+                  shipping: 'Đang giao',
+                  delivered: 'Đã giao',
+                  cancelled: 'Đã hủy'
+                };
+                return (
+                  <Link
+                    key={order._id}
+                    to={`/admin/orders/${order._id}`}
+                    className="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:border-[#a67c52] hover:bg-gray-50 transition-all"
+                  >
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-1">
+                        <p className="font-medium text-gray-900">#{order._id.slice(-6).toUpperCase()}</p>
+                        <span className={`text-xs px-2 py-1 rounded-full ${statusColors[order.orderStatus]}`}>
+                          {statusLabels[order.orderStatus]}
+                        </span>
+                      </div>
+                      <p className="text-sm text-gray-600">{order.shippingAddress?.fullName || 'N/A'}</p>
+                      <p className="text-sm text-gray-500">{new Date(order.createdAt).toLocaleDateString('vi-VN')}</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="font-bold text-gray-900">{order.total?.toLocaleString('vi-VN')} đ</p>
+                    </div>
+                  </Link>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="text-center py-8 text-gray-500">
+              <i className="ri-shopping-bag-line text-4xl mb-2"></i>
+              <p>Chưa có đơn hàng nào</p>
+            </div>
+          )}
         </div>
 
         {/* Recent Messages / Activity */}

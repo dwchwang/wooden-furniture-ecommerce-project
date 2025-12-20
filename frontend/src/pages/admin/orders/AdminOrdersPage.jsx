@@ -26,7 +26,18 @@ const AdminOrdersPage = () => {
 
   useEffect(() => {
     fetchOrders();
-  }, [filters]);
+  }, [filters.page, filters.orderStatus]);
+
+  // Debounced search effect
+  useEffect(() => {
+    const delaySearch = setTimeout(() => {
+      if (filters.search !== undefined) {
+        fetchOrders();
+      }
+    }, 500); // Wait 500ms after user stops typing
+
+    return () => clearTimeout(delaySearch);
+  }, [filters.search]);
 
   const fetchOrders = async () => {
     setLoading(true);
@@ -62,7 +73,7 @@ const AdminOrdersPage = () => {
     };
     const config = statusConfig[status] || statusConfig.pending;
     return (
-      <span className={`px - 2 py - 1 text - xs font - medium ${ config.bg } ${ config.text } rounded - full`}>
+      <span className={`px-2 py-1 text-xs font-medium ${config.bg} ${config.text} rounded-full`}>
         {config.label}
       </span>
     );
@@ -108,10 +119,19 @@ const AdminOrdersPage = () => {
                 <input
                   type="text"
                   value={filters.search}
-                  onChange={(e) => setFilters({ ...filters, search: e.target.value })}
+                  onChange={(e) => setFilters({ ...filters, search: e.target.value, page: 1 })}
                   placeholder="Tìm theo mã đơn, tên khách hàng..."
-                  className="w-full px-4 py-2 pr-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#a67c52] focus:border-transparent"
+                  className="w-full px-4 py-2 pr-20 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#a67c52] focus:border-transparent"
                 />
+                {filters.search && (
+                  <button
+                    type="button"
+                    onClick={() => setFilters({ ...filters, search: '', page: 1 })}
+                    className="absolute right-10 top-1/2 -translate-y-1/2 text-gray-400 hover:text-red-500"
+                  >
+                    <i className="ri-close-line text-xl"></i>
+                  </button>
+                )}
                 <button
                   type="submit"
                   className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-[#a67c52]"
@@ -133,6 +153,13 @@ const AdminOrdersPage = () => {
             ))}
           </select>
         </div>
+
+        {/* Search Results Indicator */}
+        {filters.search && !loading && (
+          <div className="mt-4 text-sm text-gray-600">
+            Tìm thấy <span className="font-semibold text-[#a67c52]">{pagination.totalOrders || 0}</span> kết quả cho "{filters.search}"
+          </div>
+        )}
       </div>
 
       {/* Orders Table */}
@@ -212,7 +239,7 @@ const AdminOrdersPage = () => {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                         <Link
-                          to={`/ admin / orders / ${ order._id } `}
+                          to={`/admin/orders/${order._id}`}
                           className="text-[#a67c52] hover:text-[#8b653d]"
                         >
                           <i className="ri-eye-line text-lg"></i>
@@ -243,11 +270,10 @@ const AdminOrdersPage = () => {
                     <button
                       key={index + 1}
                       onClick={() => handlePageChange(index + 1)}
-                      className={`px - 4 py - 2 rounded - lg ${
-  pagination.currentPage === index + 1
-  ? 'bg-[#a67c52] text-white'
-  : 'border border-gray-300 hover:bg-gray-50'
-} `}
+                      className={`px-4 py-2 rounded-lg ${pagination.currentPage === index + 1
+                        ? 'bg-[#a67c52] text-white'
+                        : 'border border-gray-300 hover:bg-gray-50'
+                        }`}
                     >
                       {index + 1}
                     </button>

@@ -270,10 +270,9 @@ const AdminOrderDetailPage = () => {
             <div className="space-y-2 text-sm">
               <div className="flex justify-between">
                 <span className="text-gray-600">Phương thức:</span>
-                <span className="text-gray-900">
-                  {order.paymentMethod === 'cod' && 'COD'}
-                  {order.paymentMethod === 'vnpay' && 'VNPay'}
-                  {order.paymentMethod === 'momo' && 'MoMo'}
+                <span className="font-medium text-gray-900">
+                  {order.paymentMethod === 'COD' && 'Thanh toán khi nhận hàng (COD)'}
+                  {order.paymentMethod === 'VNPay' && 'Thanh toán VNPay'}
                 </span>
               </div>
               {order.paymentInfo && (

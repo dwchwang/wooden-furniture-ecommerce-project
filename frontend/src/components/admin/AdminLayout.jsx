@@ -65,7 +65,7 @@ const AdminLayout = () => {
       roles: ["admin"]
     },
     {
-      title: 'Quản lý kho',
+      title: 'Quản lý kho hàng',
       icon: 'ri-archive-line',
       path: '/admin/inventory',
       roles: ['admin']
@@ -92,23 +92,23 @@ const AdminLayout = () => {
   return (
     <div className="flex h-screen bg-gray-100">
       {/* Sidebar */}
-      <aside className="w-64 bg-white shadow-lg">
-        <div className="h-full flex flex-col">
-          {/* Logo */}
-          <div className="p-6 border-b border-gray-200">
-            <Link to="/admin" className="flex items-center gap-2">
-              <div className="w-10 h-10 bg-gradient-to-br from-[#a67c52] to-[#8b653d] rounded-lg flex items-center justify-center">
-                <i className="ri-admin-line text-white text-xl"></i>
-              </div>
-              <div>
-                <h1 className="text-lg font-bold text-gray-900">Admin Panel</h1>
-                <p className="text-xs text-gray-500">{isAdmin ? 'Administrator' : 'Staff'}</p>
-              </div>
-            </Link>
-          </div>
+      <aside className="w-64 bg-white shadow-lg flex flex-col h-screen">
+        {/* Logo - Fixed */}
+        <div className="flex-shrink-0 p-6 border-b border-gray-200">
+          <Link to="/admin" className="flex items-center gap-2">
+            <div className="w-10 h-10 bg-gradient-to-br from-[#a67c52] to-[#8b653d] rounded-lg flex items-center justify-center">
+              <i className="ri-admin-line text-white text-xl"></i>
+            </div>
+            <div>
+              <h1 className="text-lg font-bold text-gray-900">Admin Panel</h1>
+              <p className="text-xs text-gray-500">{isAdmin ? 'Administrator' : 'Staff'}</p>
+            </div>
+          </Link>
+        </div>
 
-          {/* Navigation */}
-          <nav className="flex-1 overflow-y-auto p-4">
+        {/* Navigation - Scrollable */}
+        <div className="flex-1 overflow-y-auto">
+          <nav className="p-4">
             <ul className="space-y-2">
               {filteredNavItems.map((item) => {
                 // Special handling for dashboard: active when at /admin or /admin/dashboard
@@ -133,26 +133,26 @@ const AdminLayout = () => {
               })}
             </ul>
           </nav>
+        </div>
 
-          {/* User Info & Logout */}
-          <div className="p-4 border-t border-gray-200">
-            <div className="flex items-center gap-3 mb-3">
-              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#a67c52] to-[#8b653d] flex items-center justify-center text-white font-bold">
-                {user?.fullName?.charAt(0).toUpperCase()}
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-gray-900 truncate">{user?.fullName}</p>
-                <p className="text-xs text-gray-500">{user?.email}</p>
-              </div>
+        {/* User Info & Logout - Fixed */}
+        <div className="flex-shrink-0 p-4 border-t border-gray-200">
+          <div className="flex items-center gap-3 mb-3">
+            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#a67c52] to-[#8b653d] flex items-center justify-center text-white font-bold">
+              {user?.fullName?.charAt(0).toUpperCase()}
             </div>
-            <button
-              onClick={handleLogout}
-              className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-colors"
-            >
-              <i className="ri-logout-box-line"></i>
-              <span className="font-medium">Đăng xuất</span>
-            </button>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-medium text-gray-900 truncate">{user?.fullName}</p>
+              <p className="text-xs text-gray-500">{user?.email}</p>
+            </div>
           </div>
+          <button
+            onClick={handleLogout}
+            className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-colors"
+          >
+            <i className="ri-logout-box-line"></i>
+            <span className="font-medium">Đăng xuất</span>
+          </button>
         </div>
       </aside>
 

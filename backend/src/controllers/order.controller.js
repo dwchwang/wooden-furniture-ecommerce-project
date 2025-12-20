@@ -260,12 +260,21 @@ const getAllOrders = asyncHandler(async (req, res) => {
     orderStatus,
     paymentStatus,
     paymentMethod,
+    search,
   } = req.query;
 
   const filter = {};
   if (orderStatus) filter.orderStatus = orderStatus;
   if (paymentStatus) filter.paymentStatus = paymentStatus;
   if (paymentMethod) filter.paymentMethod = paymentMethod;
+  
+  // Add search functionality
+  if (search) {
+    filter.$or = [
+      { orderNumber: { $regex: search, $options: 'i' } },
+      { 'shippingAddress.fullName': { $regex: search, $options: 'i' } }
+    ];
+  }
 
   const skip = (Number(page) - 1) * Number(limit);
 
