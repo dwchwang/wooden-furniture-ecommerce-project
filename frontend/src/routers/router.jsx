@@ -26,6 +26,13 @@ import AdminProductsPage from "../pages/admin/products/AdminProductsPage";
 import ProductFormPage from "../pages/admin/products/ProductFormPage";
 import ProductDetailPage from "../pages/admin/products/ProductDetailPage";
 import InventoryPage from "../pages/admin/inventory/InventoryPage";
+import VouchersPage from "../pages/admin/vouchers/VouchersPage";
+import VoucherFormPage from "../pages/admin/vouchers/VoucherFormPage";
+import ReportsPage from "../pages/admin/reports/ReportsPage";
+import CategoriesPage from "../pages/admin/categories/CategoriesPage";
+import CategoryFormPage from "../pages/admin/categories/CategoryFormPage";
+import UsersPage from "../pages/admin/users/UsersPage";
+import UserFormPage from "../pages/admin/users/UserFormPage";
 import Login from "../components/Login";
 import Register from "../components/Register";
 
@@ -147,6 +154,44 @@ const router = createBrowserRouter([
       {
         path: "products/edit/:id",
         element: <ProductFormPage />,
+      },
+      {
+      },
+      {
+        path: "vouchers",
+        element: <VouchersPage />,
+      },
+      {
+        path: "vouchers/new",
+        element: <VoucherFormPage />,
+      },
+      {
+        path: "vouchers/edit/:id",
+        element: <VoucherFormPage />,
+      },
+      {
+        path: "reports",
+        element: <ReportsPage />,
+      },
+      {
+        path: "categories",
+        element: <CategoriesPage />,
+      },
+      {
+        path: "categories/new",
+        element: <CategoryFormPage />,
+      },
+      {
+        path: "categories/edit/:id",
+        element: <CategoryFormPage />,
+      },
+      {
+        path: "users",
+        element: <UsersPage />,
+      },
+      {
+        path: "users/edit/:id",
+        element: <UserFormPage />,
       },
       {
         path: "inventory",

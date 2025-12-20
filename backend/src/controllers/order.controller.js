@@ -273,7 +273,11 @@ const getAllOrders = asyncHandler(async (req, res) => {
     .populate("user", "fullName email phone")
     .populate({
       path: "items.product",
-      select: "name slug",
+      select: "name slug category",
+      populate: {
+        path: "category",
+        select: "name"
+      }
     })
     .populate({
       path: "items.variant",

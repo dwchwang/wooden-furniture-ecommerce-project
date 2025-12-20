@@ -271,6 +271,116 @@ const updateUserAvatar = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, { user }, "Avatar updated successfully"));
 });
 
+// Admin: Get all users
+const getAllUsers = asyncHandler(async (req, res) => {
+  const { page = 1, limit = 20, role, isActive, search } = req.query;
+
+  const filter = {};
+  if (role) filter.role = role;
+  if (isActive !== undefined) filter.isActive = isActive === 'true';
+  if (search) {
+    filter.$or = [
+      { fullName: { $regex: search, $options: 'i' } },
+      { email: { $regex: search, $options: 'i' } }
+    ];
+  }
+
+  const skip = (Number(page) - 1) * Number(limit);
+
+  const users = await User.find(filter)
+    .select('-password -refreshToken')
+    .sort({ createdAt: -1 })
+    .skip(skip)
+    .limit(Number(limit));
+
+  const total = await User.countDocuments(filter);
+
+  return res.status(200).json(
+    new ApiResponse(
+      200,
+      {
+        users,
+        pagination: {
+          page: Number(page),
+          limit: Number(limit),
+          total,
+          totalPages: Math.ceil(total / Number(limit)),
+        },
+      },
+      'Users fetched successfully'
+    )
+  );
+});
+
+// Admin: Get user by ID
+const getUserById = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+
+  const user = await User.findById(id).select('-password -refreshToken');
+
+  if (!user) {
+    throw new ApiError(404, 'User not found');
+  }
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, { user }, 'User fetched successfully'));
+});
+
+// Admin: Update user
+const updateUser = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  const { fullName, email, phone, role, isActive } = req.body;
+
+  const user = await User.findById(id);
+  if (!user) {
+    throw new ApiError(404, 'User not found');
+  }
+
+  // Check if email is being changed and if it's already taken
+  if (email && email !== user.email) {
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      throw new ApiError(409, 'Email already in use');
+    }
+    user.email = email;
+  }
+
+  if (fullName !== undefined) user.fullName = fullName;
+  if (phone !== undefined) user.phone = phone;
+  if (role !== undefined) user.role = role;
+  if (isActive !== undefined) user.isActive = isActive;
+
+  await user.save();
+
+  const updatedUser = await User.findById(id).select('-password -refreshToken');
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, { user: updatedUser }, 'User updated successfully'));
+});
+
+// Admin: Delete user
+const deleteUser = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+
+  const user = await User.findById(id);
+  if (!user) {
+    throw new ApiError(404, 'User not found');
+  }
+
+  // Prevent deleting yourself
+  if (user._id.toString() === req.user._id.toString()) {
+    throw new ApiError(400, 'Cannot delete your own account');
+  }
+
+  await user.deleteOne();
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, {}, 'User deleted successfully'));
+});
+
 export {
   registerUser,
   loginUser,
@@ -279,4 +389,8 @@ export {
   updateUserProfile,
   changePassword,
   updateUserAvatar,
+  getAllUsers,
+  getUserById,
+  updateUser,
+  deleteUser,
 };

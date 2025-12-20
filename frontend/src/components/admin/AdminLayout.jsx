@@ -22,6 +22,12 @@ const AdminLayout = () => {
   const navItems = [
     // Common for both admin and staff
     {
+      title: "Tổng quan",
+      icon: "ri-dashboard-line",
+      path: "/admin/dashboard",
+      roles: ["admin"]
+    },
+    {
       title: 'Quản lý đơn hàng',
       icon: 'ri-shopping-bag-line',
       path: '/admin/orders',
@@ -29,7 +35,7 @@ const AdminLayout = () => {
     },
     {
       title: 'Chat hỗ trợ',
-      icon: 'ri-message-3-line',
+      icon: 'ri-chat-3-line', // Icon changed
       path: '/admin/chat',
       roles: ['admin', 'staff']
     },
@@ -41,15 +47,9 @@ const AdminLayout = () => {
     },
     // Admin only
     {
-      title: 'Tổng quan',
-      icon: 'ri-dashboard-line',
-      path: '/admin/dashboard',
-      roles: ['admin']
-    },
-    {
       title: 'Báo cáo doanh thu',
       icon: 'ri-line-chart-line',
-      path: '/admin/revenue',
+      path: '/admin/reports',
       roles: ['admin']
     },
     {
@@ -57,6 +57,12 @@ const AdminLayout = () => {
       icon: 'ri-product-hunt-line',
       path: '/admin/products',
       roles: ['admin']
+    },
+    {
+      title: "Quản lý danh mục",
+      icon: "ri-folder-line",
+      path: "/admin/categories",
+      roles: ["admin"]
     },
     {
       title: 'Quản lý kho',
@@ -105,7 +111,11 @@ const AdminLayout = () => {
           <nav className="flex-1 overflow-y-auto p-4">
             <ul className="space-y-2">
               {filteredNavItems.map((item) => {
-                const isActive = location.pathname === item.path || location.pathname.startsWith(item.path + '/');
+                // Special handling for dashboard: active when at /admin or /admin/dashboard
+                const isDashboard = item.path === '/admin/dashboard';
+                const isActive = isDashboard
+                  ? (location.pathname === '/admin' || location.pathname === '/admin/dashboard' || location.pathname.startsWith('/admin/dashboard/'))
+                  : (location.pathname === item.path || location.pathname.startsWith(item.path + '/'));
                 return (
                   <li key={item.path}>
                     <Link
