@@ -81,15 +81,17 @@ const BlogDetailPage = () => {
             {/* Meta Info */}
             <div className="flex flex-wrap items-center gap-6 pb-6 mb-6 border-b border-gray-200">
               <div className="flex items-center gap-3">
-                <img
-                  src={currentBlog.author?.avatar || '/user.png'}
-                  alt={currentBlog.author?.fullName}
-                  className="w-12 h-12 rounded-full"
-                  onError={(e) => {
-                    e.target.onerror = null;
-                    e.target.src = '/user.png';
-                  }}
-                />
+                <div className="w-12 h-12 rounded-full overflow-hidden flex-shrink-0 bg-gray-200">
+                  <img
+                    src={currentBlog.author?.avatar || '/user.png'}
+                    alt={currentBlog.author?.fullName}
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      e.target.onerror = null;
+                      e.target.src = '/user.png';
+                    }}
+                  />
+                </div>
                 <div>
                   <p className="font-medium text-gray-900">{currentBlog.author?.fullName}</p>
                   <p className="text-sm text-gray-500">

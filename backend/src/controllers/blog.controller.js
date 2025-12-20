@@ -160,6 +160,29 @@ export const getBlogBySlug = asyncHandler(async (req, res) => {
   );
 });
 
+// @desc    Get single blog by ID (for admin edit)
+// @route   GET /api/blogs/admin/:id
+// @access  Private (Admin/Staff)
+export const getBlogById = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+
+  const blog = await Blog.findById(id)
+    .populate('author', 'fullName avatar');
+
+  if (!blog) {
+    throw new ApiError(404, 'Blog not found');
+  }
+
+  // Staff can only view their own blogs, Admin can view all
+  if (req.user.role === 'staff' && blog.author._id.toString() !== req.user._id.toString()) {
+    throw new ApiError(403, 'You do not have permission to view this blog');
+  }
+
+  res.status(200).json(
+    new ApiResponse(200, { blog }, 'Blog fetched successfully')
+  );
+});
+
 // @desc    Create new blog
 // @route   POST /api/blogs
 // @access  Private (Admin/Staff)

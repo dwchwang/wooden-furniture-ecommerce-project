@@ -19,6 +19,12 @@ const blogService = {
     return response.data;
   },
 
+  // Get single blog by ID (admin)
+  getBlogById: async (id) => {
+    const response = await api.get(`/blogs/admin/${id}`);
+    return response.data;
+  },
+
   // Toggle like on blog (requires auth)
   toggleLike: async (blogId) => {
     const response = await api.post(`/blogs/${blogId}/like`);

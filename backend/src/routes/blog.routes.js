@@ -6,6 +6,7 @@ const router = express.Router();
 
 // Admin routes (must be before public routes to avoid slug conflict)
 router.get('/admin/all', verifyJWT, blogController.getAllBlogsForAdmin);
+router.get('/admin/:id', verifyJWT, blogController.getBlogById);
 
 // Public routes
 router.get('/', blogController.getBlogs);

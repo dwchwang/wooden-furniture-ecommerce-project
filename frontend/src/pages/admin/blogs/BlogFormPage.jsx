@@ -1,12 +1,14 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 import blogService from '../../../services/blogService';
 
 const BlogFormPage = () => {
   const navigate = useNavigate();
+  const { id } = useParams();
   const { user } = useSelector((state) => state.auth);
+  const isEdit = !!id;
 
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
@@ -20,6 +22,37 @@ const BlogFormPage = () => {
   });
 
   const categories = ['Tin tức', 'Hướng dẫn', 'Sản phẩm mới', 'Khuyến mãi', 'Khác'];
+
+  useEffect(() => {
+    if (isEdit) {
+      fetchBlog();
+    }
+  }, [id]);
+
+  const fetchBlog = async () => {
+    try {
+      console.log('Fetching blog with ID:', id);
+      const response = await blogService.getBlogById(id);
+      console.log('Blog response:', response);
+      const blog = response.blog || response; // response is already {blog: {...}}
+      console.log('Extracted blog:', blog);
+
+      setFormData({
+        title: blog.title || '',
+        excerpt: blog.excerpt || '',
+        content: blog.content || '',
+        coverImage: blog.coverImage || '',
+        category: blog.category || 'Tin tức',
+        tags: Array.isArray(blog.tags) ? blog.tags.join(', ') : '',
+        isPublished: blog.isPublished || false
+      });
+    } catch (error) {
+      console.error('Error fetching blog:', error);
+      console.error('Error response:', error.response);
+      toast.error('Không tìm thấy blog');
+      navigate('/admin/blogs');
+    }
+  };
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -44,8 +77,14 @@ const BlogFormPage = () => {
         tags: formData.tags.split(',').map(tag => tag.trim()).filter(tag => tag)
       };
 
-      await blogService.createBlog(blogData);
-      toast.success('Tạo blog thành công!');
+      if (isEdit) {
+        await blogService.updateBlog(id, blogData);
+        toast.success('Cập nhật blog thành công!');
+      } else {
+        await blogService.createBlog(blogData);
+        toast.success('Tạo blog thành công!');
+      }
+
       navigate('/admin/blogs');
     } catch (error) {
       toast.error(error.response?.data?.message || 'Có lỗi xảy ra');
@@ -58,8 +97,12 @@ const BlogFormPage = () => {
     <div>
       {/* Header */}
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Viết blog mới</h1>
-        <p className="text-gray-600 mt-1">Tạo bài viết mới cho website</p>
+        <h1 className="text-2xl font-bold text-gray-900">
+          {isEdit ? 'Chỉnh sửa blog' : 'Viết blog mới'}
+        </h1>
+        <p className="text-gray-600 mt-1">
+          {isEdit ? 'Cập nhật thông tin bài viết' : 'Tạo bài viết mới cho website'}
+        </p>
       </div>
 
       <form onSubmit={handleSubmit}>

@@ -25,7 +25,18 @@ const AdminBlogsPage = () => {
 
   useEffect(() => {
     fetchBlogs();
-  }, [filters]);
+  }, [filters.page, filters.category]);
+
+  // Debounced search effect
+  useEffect(() => {
+    const delaySearch = setTimeout(() => {
+      if (filters.search !== undefined) {
+        fetchBlogs();
+      }
+    }, 500); // Wait 500ms after user stops typing
+
+    return () => clearTimeout(delaySearch);
+  }, [filters.search]);
 
   const fetchBlogs = async () => {
     setLoading(true);
@@ -48,6 +59,31 @@ const AdminBlogsPage = () => {
   const handlePageChange = (newPage) => {
     setFilters({ ...filters, page: newPage });
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleDelete = async (blogId, blogTitle) => {
+    if (!window.confirm(`Bạn có chắc chắn muốn xóa bài viết "${blogTitle}"?`)) {
+      return;
+    }
+
+    try {
+      await blogService.deleteBlog(blogId);
+      // Show success toast
+      const toast = document.createElement('div');
+      toast.className = 'fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50';
+      toast.textContent = 'Xóa bài viết thành công!';
+      document.body.appendChild(toast);
+      setTimeout(() => toast.remove(), 3000);
+
+      // Refresh blog list
+      fetchBlogs();
+    } catch (error) {
+      const toast = document.createElement('div');
+      toast.className = 'fixed top-4 right-4 bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg z-50';
+      toast.textContent = error.response?.data?.message || 'Có lỗi xảy ra khi xóa bài viết';
+      document.body.appendChild(toast);
+      setTimeout(() => toast.remove(), 3000);
+    }
   };
 
   const categories = ['Tin tức', 'Hướng dẫn', 'Sản phẩm mới', 'Khuyến mãi', 'Khác'];
@@ -79,10 +115,19 @@ const AdminBlogsPage = () => {
                 <input
                   type="text"
                   value={filters.search}
-                  onChange={(e) => setFilters({ ...filters, search: e.target.value })}
+                  onChange={(e) => setFilters({ ...filters, search: e.target.value, page: 1 })}
                   placeholder="Tìm kiếm bài viết..."
-                  className="w-full px-4 py-2 pr-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#a67c52] focus:border-transparent"
+                  className="w-full px-4 py-2 pr-20 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#a67c52] focus:border-transparent"
                 />
+                {filters.search && (
+                  <button
+                    type="button"
+                    onClick={() => setFilters({ ...filters, search: '', page: 1 })}
+                    className="absolute right-10 top-1/2 -translate-y-1/2 text-gray-400 hover:text-red-500"
+                  >
+                    <i className="ri-close-line text-xl"></i>
+                  </button>
+                )}
                 <button
                   type="submit"
                   className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-[#a67c52]"
@@ -105,6 +150,13 @@ const AdminBlogsPage = () => {
             ))}
           </select>
         </div>
+
+        {/* Search Results Indicator */}
+        {filters.search && !loading && (
+          <div className="mt-4 text-sm text-gray-600">
+            Tìm thấy <span className="font-semibold text-[#a67c52]">{pagination.totalBlogs || 0}</span> kết quả cho "{filters.search}"
+          </div>
+        )}
       </div>
 
       {/* Blog List */}
@@ -215,6 +267,7 @@ const AdminBlogsPage = () => {
                           <i className="ri-edit-line text-lg"></i>
                         </Link>
                         <button
+                          onClick={() => handleDelete(blog._id, blog.title)}
                           className="text-red-600 hover:text-red-900"
                           title="Xóa"
                         >
