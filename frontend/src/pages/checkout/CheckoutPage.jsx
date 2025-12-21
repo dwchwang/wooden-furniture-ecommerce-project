@@ -106,7 +106,7 @@ const CheckoutPage = () => {
           price: Number(String(p.price).replace(/\D/g, "")),
         })),
         shippingAddress,
-        voucher: appliedVoucher?._id,
+        voucherCode: appliedVoucher?.code,
         shippingFee,
         paymentMethod,
         notes,

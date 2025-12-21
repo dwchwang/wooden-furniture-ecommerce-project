@@ -7,8 +7,8 @@ export const voucherService = {
   },
 
   // Validate voucher
-  validateVoucher: async (code, orderTotal) => {
-    return await api.post('/vouchers/validate', { code, orderTotal });
+  validateVoucher: async (code, orderValue) => {
+    return await api.post('/vouchers/validate', { code, orderValue });
   },
 };
 

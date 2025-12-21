@@ -50,11 +50,19 @@ const createVoucher = asyncHandler(async (req, res) => {
 
 // Get all vouchers (Admin)
 const getAllVouchers = asyncHandler(async (req, res) => {
-  const { isActive, page = 1, limit = 20 } = req.query;
+  const { isActive, search, page = 1, limit = 20 } = req.query;
 
   const filter = {};
   if (isActive !== undefined) {
     filter.isActive = isActive === "true";
+  }
+
+  // Add search functionality
+  if (search) {
+    filter.$or = [
+      { code: { $regex: search, $options: "i" } },
+      { description: { $regex: search, $options: "i" } },
+    ];
   }
 
   const skip = (Number(page) - 1) * Number(limit);
