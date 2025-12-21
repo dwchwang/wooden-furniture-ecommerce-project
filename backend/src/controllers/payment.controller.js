@@ -65,7 +65,8 @@ const createVNPayPayment = asyncHandler(async (req, res) => {
   const vnpay = getVNPayInstance();
 
   // Create payment URL using vnpay package
-  const returnUrl = `http://localhost:8000/api/v1/payments/vnpay/return`;
+  const backendUrl = process.env.BACKEND_URL || 'http://localhost:8000';
+  const returnUrl = `${backendUrl}/api/v1/payments/vnpay/return`;
   
   const paymentUrl = vnpay.buildPaymentUrl({
     vnp_Amount: order.total,
@@ -165,8 +166,9 @@ const vnpayReturn = asyncHandler(async (req, res) => {
     await order.save();
 
     // Redirect to success page (frontend will handle this)
+    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
     return res.redirect(
-      `http://localhost:5173/payment/success?orderId=${order._id}&transactionNo=${paymentData.transactionNo}`
+      `${frontendUrl}/payment/success?orderId=${order._id}&transactionNo=${paymentData.transactionNo}`
     );
   } else {
     // Payment failed
@@ -174,8 +176,9 @@ const vnpayReturn = asyncHandler(async (req, res) => {
     await order.save();
 
     // Redirect to failure page
+    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
     return res.redirect(
-      `http://localhost:5173/payment/failed?orderId=${order._id}&message=${encodeURIComponent(message)}`
+      `${frontendUrl}/payment/failed?orderId=${order._id}&message=${encodeURIComponent(message)}`
     );
   }
 });
