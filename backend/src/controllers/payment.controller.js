@@ -167,6 +167,8 @@ const vnpayReturn = asyncHandler(async (req, res) => {
 
     // Redirect to success page (frontend will handle this)
     const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+    console.log('🔍 [VNPay Success] FRONTEND_URL from env:', process.env.FRONTEND_URL);
+    console.log('🔍 [VNPay Success] Using frontendUrl:', frontendUrl);
     return res.redirect(
       `${frontendUrl}/payment/success?orderId=${order._id}&transactionNo=${paymentData.transactionNo}`
     );
@@ -177,6 +179,8 @@ const vnpayReturn = asyncHandler(async (req, res) => {
 
     // Redirect to failure page
     const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+    console.log('🔍 [VNPay Failed] FRONTEND_URL from env:', process.env.FRONTEND_URL);
+    console.log('🔍 [VNPay Failed] Using frontendUrl:', frontendUrl);
     return res.redirect(
       `${frontendUrl}/payment/failed?orderId=${order._id}&message=${encodeURIComponent(message)}`
     );
