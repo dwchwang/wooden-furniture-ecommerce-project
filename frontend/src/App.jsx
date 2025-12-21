@@ -5,6 +5,7 @@ import { fetchCurrentUser } from "./redux/features/auth/authSlice";
 import "./App.css";
 import Navbar from "./components/Navbar.jsx";
 import Footer from "./components/Footer.jsx";
+import ChatButton from "./components/ChatButton.jsx";
 
 function App() {
   const dispatch = useDispatch();
@@ -22,6 +23,7 @@ function App() {
       <Navbar></Navbar>
       <Outlet></Outlet>
       <Footer></Footer>
+      <ChatButton />
     </>
   );
 }

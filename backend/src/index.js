@@ -3,6 +3,7 @@ import "dotenv/config.js";
 import connectDB from './db/index.js';
 import { createServer } from 'http';
 import { initializeSocket } from './socket/index.js';
+import { setupChatSocket } from './socket/chatSocket.js';
 
 const PORT = process.env.PORT || 8000;
 
@@ -10,7 +11,10 @@ const PORT = process.env.PORT || 8000;
 const httpServer = createServer(app);
 
 // Initialize Socket.io
-initializeSocket(httpServer);
+const io = initializeSocket(httpServer);
+
+// Setup chat socket handlers
+setupChatSocket(io);
 
 connectDB()
   .then(() => {

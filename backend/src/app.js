@@ -47,6 +47,7 @@ import blogRoutes from './routes/blog.routes.js';
 import messageRoutes from './routes/message.routes.js';
 import uploadRoutes from './routes/upload.routes.js';
 import paymentRoutes from './routes/payment.routes.js';
+import chatRoutes from './routes/chat.routes.js';
 
 //import middlewares
 import { errorHandler } from './middlewares/error.middleware.js';
@@ -63,6 +64,7 @@ app.use('/api/v1/blogs', blogRoutes);
 app.use('/api/v1/messages', messageRoutes);
 app.use('/api/v1/upload', uploadRoutes);
 app.use('/api/v1/payments', paymentRoutes);
+app.use('/api/v1/chat', chatRoutes);
 
 
 app.get('/', (req, res) => {

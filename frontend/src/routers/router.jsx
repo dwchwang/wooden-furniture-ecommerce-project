@@ -33,6 +33,7 @@ import CategoriesPage from "../pages/admin/categories/CategoriesPage";
 import CategoryFormPage from "../pages/admin/categories/CategoryFormPage";
 import UsersPage from "../pages/admin/users/UsersPage";
 import UserFormPage from "../pages/admin/users/UserFormPage";
+import AdminChatPage from "../pages/admin/chat/AdminChatPage";
 import Login from "../components/Login";
 import Register from "../components/Register";
 
@@ -138,6 +139,10 @@ const router = createBrowserRouter([
       {
         path: "orders/:id",
         element: <AdminOrderDetailPage />,
+      },
+      {
+        path: "chat",
+        element: <AdminChatPage />,
       },
       {
         path: "products",
