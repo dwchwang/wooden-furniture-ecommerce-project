@@ -10,20 +10,21 @@ const PaymentSuccess = () => {
   const orderId = searchParams.get("orderId");
   const transactionNo = searchParams.get("transactionNo");
 
+  // Countdown timer
   useEffect(() => {
     const timer = setInterval(() => {
-      setCountdown((prev) => {
-        if (prev <= 1) {
-          clearInterval(timer);
-          navigate(`/orders/${orderId}`);
-          return 0;
-        }
-        return prev - 1;
-      });
+      setCountdown((prev) => prev - 1);
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [orderId, navigate]);
+  }, []);
+
+  // Navigate when countdown reaches 0
+  useEffect(() => {
+    if (countdown <= 0) {
+      navigate(`/orders/${orderId}`);
+    }
+  }, [countdown, orderId, navigate]);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
