@@ -150,15 +150,18 @@ const BlogListPage = () => {
                         </p>
                         <div className="flex items-center justify-between text-sm text-gray-500">
                           <div className="flex items-center gap-2">
-                            <img
-                              src={blog.author?.avatar || '/user.png'}
-                              alt={blog.author?.fullName}
-                              className="w-6 h-6 rounded-full"
-                              onError={(e) => {
-                                e.target.onerror = null;
-                                e.target.src = '/user.png';
-                              }}
-                            />
+                            <div className="w-6 h-6 rounded-full overflow-hidden flex-shrink-0">
+                              <img
+                                src={blog.author?.avatar || '/user.png'}
+                                alt={blog.author?.fullName}
+                                className="w-full h-full object-cover"
+                                style={{ aspectRatio: '1 / 1' }}
+                                onError={(e) => {
+                                  e.target.onerror = null;
+                                  e.target.src = '/user.png';
+                                }}
+                              />
+                            </div>
                             <span>{blog.author?.fullName}</span>
                           </div>
                           <span>
