@@ -26,7 +26,18 @@ const VouchersPage = () => {
 
   useEffect(() => {
     fetchVouchers();
-  }, [filters]);
+  }, [filters.page, filters.isActive]);
+
+  // Debounced search
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (filters.search !== undefined) {
+        fetchVouchers();
+      }
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [filters.search]);
 
   const fetchVouchers = async () => {
     setLoading(true);
@@ -75,7 +86,7 @@ const VouchersPage = () => {
 
   const toggleStatus = async (voucher) => {
     try {
-      await api.put(`/vouchers/${voucher._id}`, {
+      await api.patch(`/vouchers/${voucher._id}`, {
         isActive: !voucher.isActive
       });
       toast.success(`${voucher.isActive ? 'Vô hiệu hóa' : 'Kích hoạt'} voucher thành công`);
@@ -197,15 +208,23 @@ const VouchersPage = () => {
               <input
                 type="text"
                 value={filters.search}
-                onChange={(e) => setFilters({ ...filters, search: e.target.value })}
+                onChange={(e) => setFilters({ ...filters, search: e.target.value, page: 1 })}
                 placeholder="Tìm kiếm mã voucher, mô tả..."
-                className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#a67c52] focus:border-transparent"
+                className="w-full pl-12 pr-12 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#a67c52] focus:border-transparent"
               />
+              {filters.search && (
+                <button
+                  onClick={() => setFilters({ ...filters, search: '', page: 1 })}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                >
+                  <i className="ri-close-circle-fill text-xl"></i>
+                </button>
+              )}
             </div>
           </div>
           <select
             value={filters.isActive}
-            onChange={(e) => setFilters({ ...filters, isActive: e.target.value })}
+            onChange={(e) => setFilters({ ...filters, isActive: e.target.value, page: 1 })}
             className="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#a67c52] focus:border-transparent"
           >
             <option value="">🎫 Tất cả trạng thái</option>
@@ -213,6 +232,13 @@ const VouchersPage = () => {
             <option value="false">❌ Vô hiệu hóa</option>
           </select>
         </div>
+
+        {/* Search Results Indicator */}
+        {filters.search && (
+          <div className="mt-4 text-sm text-gray-600">
+            Tìm thấy <span className="font-medium text-gray-900">{vouchers.length}</span> kết quả cho "{filters.search}"
+          </div>
+        )}
       </div>
 
       {/* Vouchers Grid */}
@@ -280,8 +306,8 @@ const VouchersPage = () => {
                       <button
                         onClick={() => toggleStatus(voucher)}
                         className={`p-2 rounded-lg transition-colors ${voucher.isActive
-                            ? 'text-green-600 hover:bg-green-50'
-                            : 'text-gray-400 hover:bg-gray-50'
+                          ? 'text-green-600 hover:bg-green-50'
+                          : 'text-gray-400 hover:bg-gray-50'
                           }`}
                         title={voucher.isActive ? 'Vô hiệu hóa' : 'Kích hoạt'}
                       >
@@ -342,8 +368,8 @@ const VouchersPage = () => {
                       <div className="w-full bg-gray-200 rounded-full h-2">
                         <div
                           className={`h-2 rounded-full transition-all ${usagePercent >= 100 ? 'bg-red-500' :
-                              usagePercent >= 80 ? 'bg-yellow-500' :
-                                'bg-green-500'
+                            usagePercent >= 80 ? 'bg-yellow-500' :
+                              'bg-green-500'
                             }`}
                           style={{ width: `${Math.min(usagePercent, 100)}%` }}
                         ></div>

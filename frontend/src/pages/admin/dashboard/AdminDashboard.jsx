@@ -37,13 +37,15 @@ const AdminDashboard = () => {
         totalRevenue: stats.totalRevenue || 0
       });
 
-      // Fetch customers count
-      try {
-        const usersResponse = await api.get('/users/admin/all');
-        const customers = usersResponse.data?.users?.filter(u => u.role === 'customer') || [];
-        setCustomersCount(customers.length);
-      } catch (error) {
-        console.error('Error fetching customers:', error);
+      // Fetch customers count (admin only)
+      if (isAdmin) {
+        try {
+          const usersResponse = await api.get('/users/admin/all');
+          const customers = usersResponse.data?.users?.filter(u => u.role === 'customer') || [];
+          setCustomersCount(customers.length);
+        } catch (error) {
+          console.error('Error fetching customers:', error);
+        }
       }
 
       // Fetch products count

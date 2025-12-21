@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import instaImg1 from "../assets/instagram-1.jpg";
 import instaImg2 from "../assets/instagram-2.jpg";
 import instaImg3 from "../assets/instagram-3.jpg";
@@ -10,14 +11,14 @@ const Footer = () => {
   return (
     <>
       <footer className="section__container footer__container">
-        {/* info */}
+        {/* Contact Info */}
         <div className="footer__col">
-          <h4>CONTACT INFO</h4>
+          <h4>THÔNG TIN LIÊN HỆ</h4>
           <p>
             <span>
               <i className="ri-map-pin-fill"></i>
             </span>
-            136 Ho Tung Mau, Ha Noi
+            136 Hồ Tùng Mậu, Hà Nội
           </p>
           <p>
             <span>
@@ -29,46 +30,46 @@ const Footer = () => {
             <span>
               <i className="ri-phone-fill"></i>
             </span>
-            0345829556
+            0345 829 556
           </p>
         </div>
 
-        {/* company */}
+        {/* Company */}
         <div className="footer__col">
-          <h4>COMPANY</h4>
-          <a href="/">Home</a>
-          <a href="/">About Us</a>
-          <a href="/">Work With Us</a>
-          <a href="/">Our Blogs</a>
-          <a href="/">Terms & Conditions</a>
+          <h4>CỬA HÀNG</h4>
+          <Link to="/">Trang Chủ</Link>
+          <Link to="/shop">Cửa Hàng</Link>
+          <Link to="/contact">Liên Hệ</Link>
+          <Link to="/blogs">Tin Tức</Link>
+          <a href="#terms">Điều Khoản & Điều Kiện</a>
         </div>
 
-        {/* usefullink */}
+        {/* Useful Links */}
         <div className="footer__col">
-          <h4>USEFUL LINK</h4>
-          <a href="/">Help</a>
-          <a href="/">Track Your Order</a>
-          <a href="/">Table</a>
-          <a href="/">Bed</a>
-          <a href="/">Cabinet</a>
+          <h4>LIÊN KẾT HỮU ÍCH</h4>
+          <Link to="/contact">Trợ Giúp</Link>
+          <Link to="/orders">Theo Dõi Đơn Hàng</Link>
+          <Link to="/shop?category=ban">Bàn</Link>
+          <Link to="/shop?category=giuong">Giường</Link>
+          <Link to="/shop?category=tu">Tủ</Link>
         </div>
 
-        {/* Facebook */}
+        {/* Social Media */}
         <div className="footer__col">
-          <h4>FACEBOOK</h4>
+          <h4>KẾT NỐI VỚI CHÚNG TÔI</h4>
           <div className="instagram__grid">
-            <img src={instaImg1} alt="instaImg1" />
-            <img src={instaImg2} alt="instaImg2" />
-            <img src={instaImg3} alt="instaImg3" />
-            <img src={instaImg4} alt="instaImg4" />
-            <img src={instaImg5} alt="instaImg5" />
-            <img src={instaImg6} alt="instaImg6" />
+            <img src={instaImg1} alt="Nội thất 1" />
+            <img src={instaImg2} alt="Nội thất 2" />
+            <img src={instaImg3} alt="Nội thất 3" />
+            <img src={instaImg4} alt="Nội thất 4" />
+            <img src={instaImg5} alt="Nội thất 5" />
+            <img src={instaImg6} alt="Nội thất 6" />
           </div>
         </div>
       </footer>
 
       <div className="footer__bar">
-        Copyright © 2025 by woodenfurniture. All rights reserved.
+        Bản quyền © 2025 bởi Wooden Furniture. Đã đăng ký bản quyền.
       </div>
     </>
   );

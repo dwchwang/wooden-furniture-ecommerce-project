@@ -123,18 +123,12 @@ const Navbar = () => {
               </span>
             )}
 
-            {/* Dashboard icon for admin/staff OR Orders icon for customers */}
-            {isAuthenticated && user && (
+            {/* Dashboard icon for admin/staff only */}
+            {isAuthenticated && user && (user.role === 'admin' || user.role === 'staff') && (
               <span>
-                {user.role === 'admin' || user.role === 'staff' ? (
-                  <Link to="/admin" className="hover:text-primary" title="Dashboard">
-                    <i className="ri-dashboard-line"></i>
-                  </Link>
-                ) : (
-                  <Link to="/orders" className="hover:text-primary" title="Đơn hàng">
-                    <i className="ri-file-list-3-line"></i>
-                  </Link>
-                )}
+                <Link to="/admin" className="hover:text-primary" title="Dashboard">
+                  <i className="ri-dashboard-line"></i>
+                </Link>
               </span>
             )}
 

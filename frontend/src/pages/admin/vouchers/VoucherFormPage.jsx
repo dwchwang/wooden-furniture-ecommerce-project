@@ -30,8 +30,11 @@ const VoucherFormPage = () => {
 
   const fetchVoucher = async () => {
     try {
+      console.log('Fetching voucher with ID:', id);
       const response = await api.get(`/vouchers/${id}`);
-      const voucher = response.data?.voucher;
+      console.log('Voucher response:', response);
+      const voucher = response.data?.voucher || response.data;
+      console.log('Extracted voucher:', voucher);
 
       setFormData({
         code: voucher.code || '',
@@ -46,6 +49,7 @@ const VoucherFormPage = () => {
         isActive: voucher.isActive ?? true
       });
     } catch (error) {
+      console.error('Error fetching voucher:', error);
       toast.error('Lỗi khi tải voucher');
       navigate('/admin/vouchers');
     }
@@ -65,7 +69,7 @@ const VoucherFormPage = () => {
       };
 
       if (isEdit) {
-        await api.put(`/vouchers/${id}`, submitData);
+        await api.patch(`/vouchers/${id}`, submitData);
         toast.success('Cập nhật voucher thành công');
       } else {
         await api.post('/vouchers', submitData);
@@ -296,16 +300,16 @@ const VoucherFormPage = () => {
         {formData.code && formData.discountValue && (
           <div className="bg-gradient-to-r from-[#a67c52] to-[#8b653d] rounded-xl shadow-lg p-6 text-white">
             <h3 className="text-sm font-medium text-white text-opacity-80 mb-3">Xem trước voucher</h3>
-            <div className="bg-white bg-opacity-10 backdrop-blur-sm rounded-lg p-4">
+            <div className="bg-white bg-opacity-10 backdrop-blur-sm rounded-lg p-4 text-black">
               <div className="flex items-center justify-between mb-3">
                 <div>
                   <p className="text-2xl font-bold tracking-wider">{formData.code}</p>
                   {formData.description && (
-                    <p className="text-sm text-white text-opacity-90 mt-1">{formData.description}</p>
+                    <p className="text-sm text-black text-opacity-90 mt-1">{formData.description}</p>
                   )}
                 </div>
                 <div className="text-right">
-                  <p className="text-xs text-white text-opacity-80">Giảm</p>
+                  <p className="text-xs text-black text-opacity-80">Giảm</p>
                   <p className="text-3xl font-bold">
                     {formData.discountType === 'percentage'
                       ? `${formData.discountValue}%`
@@ -314,16 +318,16 @@ const VoucherFormPage = () => {
                   </p>
                 </div>
               </div>
-              <div className="grid grid-cols-2 gap-3 text-sm">
+              <div className="grid grid-cols-2 gap-3 text-sm text-black">
                 {formData.minOrderValue && (
                   <div>
-                    <p className="text-white text-opacity-70">Đơn tối thiểu</p>
+                    <p className="text-black text-opacity-70">Đơn tối thiểu</p>
                     <p className="font-medium">{parseFloat(formData.minOrderValue).toLocaleString('vi-VN')}đ</p>
                   </div>
                 )}
                 {formData.maxDiscountAmount && formData.discountType === 'percentage' && (
                   <div>
-                    <p className="text-white text-opacity-70">Giảm tối đa</p>
+                    <p className="text-black text-opacity-70">Giảm tối đa</p>
                     <p className="font-medium">{parseFloat(formData.maxDiscountAmount).toLocaleString('vi-VN')}đ</p>
                   </div>
                 )}

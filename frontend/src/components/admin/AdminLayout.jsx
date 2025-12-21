@@ -25,7 +25,7 @@ const AdminLayout = () => {
       title: "Tổng quan",
       icon: "ri-dashboard-line",
       path: "/admin/dashboard",
-      roles: ["admin"]
+      roles: ["admin", "staff"]
     },
     {
       title: 'Quản lý đơn hàng',
