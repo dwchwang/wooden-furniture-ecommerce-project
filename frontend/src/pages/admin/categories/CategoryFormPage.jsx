@@ -36,8 +36,11 @@ const CategoryFormPage = () => {
 
   const fetchCategory = async () => {
     try {
+      console.log('Fetching category with ID:', id);
       const response = await api.get(`/categories/${id}`);
-      const category = response.data?.category;
+      console.log('Category response:', response);
+      const category = response.data?.category || response.data;
+      console.log('Extracted category:', category);
 
       setFormData({
         name: category.name || '',
@@ -47,6 +50,8 @@ const CategoryFormPage = () => {
         isActive: category.isActive ?? true
       });
     } catch (error) {
+      console.error('Error fetching category:', error);
+      console.error('Error response:', error.response);
       toast.error('Lỗi khi tải danh mục');
       navigate('/admin/categories');
     }
@@ -63,7 +68,7 @@ const CategoryFormPage = () => {
       };
 
       if (isEdit) {
-        await api.put(`/categories/${id}`, submitData);
+        await api.patch(`/categories/${id}`, submitData);
         toast.success('Cập nhật danh mục thành công');
       } else {
         await api.post('/categories', submitData);

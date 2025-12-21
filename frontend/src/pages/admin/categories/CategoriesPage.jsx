@@ -150,11 +150,11 @@ const CategoriesPage = () => {
         </div>
       ) : (
         <div className="bg-white rounded-xl shadow-md overflow-hidden">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
+          <table className="w-full">
+            <thead className="bg-gray-50 border-b border-gray-200">
               <tr>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Tên danh mục
+                  Danh mục
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Slug
@@ -162,7 +162,7 @@ const CategoriesPage = () => {
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Danh mục cha
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Trạng thái
                 </th>
                 <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -172,26 +172,30 @@ const CategoriesPage = () => {
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
               {categories.map((category) => (
-                <tr key={category._id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="flex items-center">
+                <tr key={category._id} className="hover:bg-gray-50 transition-colors">
+                  <td className="px-6 py-4">
+                    <div className="flex items-center gap-3">
                       {category.image && (
-                        <img
-                          src={category.image}
-                          alt={category.name}
-                          className="w-10 h-10 rounded-lg object-cover mr-3"
-                        />
+                        <div className="flex-shrink-0 w-12 h-12 bg-gray-100 rounded-lg overflow-hidden">
+                          <img
+                            src={category.image}
+                            alt={category.name}
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
                       )}
-                      <div>
-                        <div className="text-sm font-medium text-gray-900">{category.name}</div>
+                      <div className="flex-1 min-w-0">
+                        <p className="font-medium text-gray-900">{category.name}</p>
                         {category.description && (
-                          <div className="text-sm text-gray-500 line-clamp-1">{category.description}</div>
+                          <p className="text-sm text-gray-500 line-clamp-1">{category.description}</p>
                         )}
                       </div>
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <span className="text-sm text-gray-600 font-mono">{category.slug}</span>
+                    <span className="text-sm text-gray-600 font-mono bg-gray-50 px-2 py-1 rounded">
+                      {category.slug}
+                    </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     {category.parent ? (
@@ -200,12 +204,12 @@ const CategoriesPage = () => {
                       <span className="text-sm text-gray-400 italic">Danh mục gốc</span>
                     )}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className="px-6 py-4 whitespace-nowrap text-center">
                     <button
                       onClick={() => toggleStatus(category)}
-                      className={`px-3 py-1 rounded-full text-xs font-medium ${category.isActive
-                          ? 'bg-green-100 text-green-700'
-                          : 'bg-gray-100 text-gray-700'
+                      className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${category.isActive
+                          ? 'bg-green-100 text-green-700 hover:bg-green-200'
+                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                         }`}
                     >
                       {category.isActive ? 'Hoạt động' : 'Vô hiệu'}
@@ -215,14 +219,14 @@ const CategoriesPage = () => {
                     <div className="flex items-center justify-end gap-2">
                       <Link
                         to={`/admin/categories/edit/${category._id}`}
-                        className="text-[#a67c52] hover:text-[#8b653d] p-2 rounded-lg hover:bg-gray-100 transition-colors"
+                        className="text-[#a67c52] hover:text-[#8b653d]"
                         title="Sửa"
                       >
                         <i className="ri-edit-line text-lg"></i>
                       </Link>
                       <button
                         onClick={() => handleDelete(category._id)}
-                        className="text-red-600 hover:text-red-700 p-2 rounded-lg hover:bg-red-50 transition-colors"
+                        className="text-red-600 hover:text-red-800"
                         title="Xóa"
                       >
                         <i className="ri-delete-bin-line text-lg"></i>

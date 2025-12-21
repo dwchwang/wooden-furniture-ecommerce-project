@@ -11,15 +11,17 @@ const AdminProductsPage = () => {
     limit: 10,
     search: '',
     category: '',
-    type: ''
+    isActive: ''
   });
   const [pagination, setPagination] = useState({
     currentPage: 1,
     totalPages: 1,
     total: 0
   });
+  const [categories, setCategories] = useState([]);
 
   useEffect(() => {
+    fetchCategories();
     fetchProducts();
   }, [filters]);
 
@@ -44,6 +46,15 @@ const AdminProductsPage = () => {
     }
   };
 
+  const fetchCategories = async () => {
+    try {
+      const response = await api.get('/categories');
+      setCategories(response.data?.categories || []);
+    } catch (error) {
+      console.error('Error fetching categories:', error);
+    }
+  };
+
   const handleDelete = async (id) => {
     if (!window.confirm('Bạn có chắc muốn xóa sản phẩm này?')) return;
 
@@ -56,7 +67,7 @@ const AdminProductsPage = () => {
     }
   };
 
-  const productTypes = ['Bàn', 'Ghế', 'Giường', 'Tủ', 'Kệ', 'Sofa', 'Bàn Làm Việc', 'Tủ Quần Áo', 'Bàn Ăn', 'Ghế Ăn', 'Bàn Trà', 'Kệ Sách', 'Tủ Giày', 'Khác'];
+
 
   return (
     <div>
@@ -86,13 +97,13 @@ const AdminProductsPage = () => {
             className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#a67c52] focus:border-transparent"
           />
           <select
-            value={filters.type}
-            onChange={(e) => setFilters({ ...filters, type: e.target.value, page: 1 })}
+            value={filters.category}
+            onChange={(e) => setFilters({ ...filters, category: e.target.value, page: 1 })}
             className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#a67c52] focus:border-transparent"
           >
-            <option value="">Tất cả loại</option>
-            {productTypes.map(type => (
-              <option key={type} value={type}>{type}</option>
+            <option value="">Tất cả danh mục</option>
+            {categories.map(cat => (
+              <option key={cat._id} value={cat._id}>{cat.name}</option>
             ))}
           </select>
           <select
@@ -208,23 +219,33 @@ const AdminProductsPage = () => {
             {pagination.totalPages > 1 && (
               <div className="px-6 py-4 border-t border-gray-200 flex items-center justify-between">
                 <div className="text-sm text-gray-700">
-                  Hiển thị {products.length} trong tổng số {pagination.total} sản phẩm
+                  Hiển thị <span className="font-medium">{products.length}</span> trong tổng số{' '}
+                  <span className="font-medium">{pagination.total}</span> sản phẩm
                 </div>
                 <div className="flex gap-2">
                   <button
                     onClick={() => setFilters({ ...filters, page: filters.page - 1 })}
                     disabled={filters.page === 1}
-                    className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50"
+                    className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     <i className="ri-arrow-left-line"></i>
                   </button>
-                  <span className="px-4 py-2">
-                    Trang {pagination.currentPage} / {pagination.totalPages}
-                  </span>
+                  {[...Array(pagination.totalPages)].map((_, index) => (
+                    <button
+                      key={index + 1}
+                      onClick={() => setFilters({ ...filters, page: index + 1 })}
+                      className={`px-4 py-2 rounded-lg ${filters.page === index + 1
+                        ? 'bg-[#a67c52] text-white hover:bg-[#8b653d]'
+                        : 'border border-gray-300 hover:bg-gray-50'
+                        }`}
+                    >
+                      {index + 1}
+                    </button>
+                  ))}
                   <button
                     onClick={() => setFilters({ ...filters, page: filters.page + 1 })}
                     disabled={filters.page === pagination.totalPages}
-                    className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50"
+                    className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     <i className="ri-arrow-right-line"></i>
                   </button>

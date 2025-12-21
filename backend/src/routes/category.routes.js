@@ -15,8 +15,8 @@ const router = express.Router();
 // Public routes
 router.get("/", getAllCategories);
 router.get("/tree", getCategoryTree);
-router.get("/:id", getCategoryById);
 router.get("/slug/:slug", getCategoryBySlug);
+router.get("/:id", getCategoryById);
 
 // Admin only routes
 router.post("/", verifyJWT, verifyAdmin, createCategory);

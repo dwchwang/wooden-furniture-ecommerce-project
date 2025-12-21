@@ -56,8 +56,11 @@ const ProductFormPage = () => {
 
   const fetchProduct = async () => {
     try {
+      console.log('Fetching product with ID:', id);
       const response = await api.get(`/products/${id}`);
-      const product = response.data;
+      console.log('Product response:', response);
+      const product = response.data?.product || response.data;
+      console.log('Extracted product:', product);
       setFormData({
         name: product.name || '',
         description: product.description || '',
@@ -86,6 +89,7 @@ const ProductFormPage = () => {
         })));
       }
     } catch (error) {
+      console.error('Error fetching product:', error);
       toast.error('Lỗi khi tải sản phẩm');
       navigate('/admin/products');
     }
@@ -212,7 +216,7 @@ const ProductFormPage = () => {
 
       let productId;
       if (isEdit) {
-        await api.put(`/products/${id}`, productData);
+        await api.patch(`/products/${id}`, productData);
         productId = id;
         toast.success('Cập nhật sản phẩm thành công');
       } else {

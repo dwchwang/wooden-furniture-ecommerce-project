@@ -120,8 +120,8 @@ const AdminLayout = () => {
                   <li key={item.path}>
                     <Link
                       to={item.path}
-                      className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-colors ${isActive
-                        ? 'bg-[#a67c52] text-white'
+                      className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${isActive
+                        ? 'bg-[#a67c52] text-white shadow-md'
                         : 'text-gray-700 hover:bg-gray-100'
                         }`}
                     >

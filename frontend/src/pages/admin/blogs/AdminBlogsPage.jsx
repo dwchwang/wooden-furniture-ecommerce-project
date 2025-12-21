@@ -299,8 +299,8 @@ const AdminBlogsPage = () => {
                     <button
                       key={index + 1}
                       onClick={() => handlePageChange(index + 1)}
-                      className={`px-4 py-2 rounded-lg ${pagination.currentPage === index + 1
-                        ? 'bg-[#a67c52] text-white'
+                      className={`px-4 py-2 rounded-lg ${filters.page === index + 1
+                        ? 'bg-[#a67c52] text-white hover:bg-[#8b653d]'
                         : 'border border-gray-300 hover:bg-gray-50'
                         }`}
                     >
