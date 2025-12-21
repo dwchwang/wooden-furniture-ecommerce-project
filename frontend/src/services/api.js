@@ -35,7 +35,9 @@ api.interceptors.response.use(
     // Handle specific error cases
     if (error.response?.status === 401) {
       // Don't auto-redirect if it's a /users/me request (auth check on page load)
-      if (!error.config?.url?.includes('/users/me')) {
+      // or /orders request (let component handle it)
+      const url = error.config?.url || '';
+      if (!url.includes('/users/me') && !url.includes('/orders')) {
         // Unauthorized - clear token and redirect to login
         localStorage.removeItem('accessToken');
         localStorage.removeItem('refreshToken');
