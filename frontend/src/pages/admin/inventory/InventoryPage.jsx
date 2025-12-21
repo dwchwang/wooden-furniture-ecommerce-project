@@ -129,7 +129,7 @@ const InventoryPage = () => {
     <div>
       {/* Header */}
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Quản lý Kho</h1>
+        <h1 className="text-2xl font-bold text-gray-900">Quản lý Kho hàng</h1>
         <p className="text-gray-600 mt-1">Theo dõi và quản lý tồn kho sản phẩm</p>
       </div>
 
@@ -314,49 +314,73 @@ const InventoryPage = () => {
 
       {/* Stock Adjustment Modal */}
       {showAdjustModal && selectedVariant && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full">
+        <div
+          className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
+          onClick={() => setShowAdjustModal(false)}
+        >
+          <div
+            className="bg-white rounded-2xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-y-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Header */}
             <div className="p-6 border-b border-gray-200">
-              <div className="flex items-start gap-4">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-xl font-bold text-gray-900">Điều chỉnh tồn kho</h3>
+                <button
+                  onClick={() => setShowAdjustModal(false)}
+                  className="text-gray-400 hover:text-gray-600 transition-colors"
+                >
+                  <i className="ri-close-line text-2xl"></i>
+                </button>
+              </div>
+
+              {/* Product Info */}
+              <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
                 {selectedVariant.productImage && (
-                  <img
-                    src={selectedVariant.productImage}
-                    alt={selectedVariant.productName}
-                    className="w-16 h-16 object-cover rounded-lg"
-                  />
+                  <div className="w-12 h-12 bg-white rounded-lg overflow-hidden flex-shrink-0">
+                    <img
+                      src={selectedVariant.productImage}
+                      alt={selectedVariant.productName}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
                 )}
-                <div className="flex-1">
-                  <h3 className="text-lg font-bold text-gray-900">Điều chỉnh tồn kho</h3>
-                  <p className="text-sm text-gray-600 mt-1">{selectedVariant.productName}</p>
-                  <p className="text-xs text-gray-500 font-mono mt-1">{selectedVariant.sku}</p>
+                <div className="flex-1 min-w-0">
+                  <p className="font-medium text-gray-900 line-clamp-1">{selectedVariant.productName}</p>
+                  <p className="text-xs text-gray-500 font-mono mt-0.5">{selectedVariant.sku}</p>
                 </div>
               </div>
             </div>
 
+            {/* Body */}
             <div className="p-6 space-y-5">
+              {/* Current Stock */}
               <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
                 <p className="text-sm text-blue-800 mb-1">Tồn kho hiện tại</p>
                 <p className="text-3xl font-bold text-blue-900">{selectedVariant.stock}</p>
               </div>
 
+              {/* Operation Type */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Loại điều chỉnh</label>
                 <div className="grid grid-cols-2 gap-3">
                   <button
+                    type="button"
                     onClick={() => setAdjustmentData({ ...adjustmentData, operation: 'increase' })}
                     className={`py-3 px-4 rounded-lg border-2 font-medium transition-all ${adjustmentData.operation === 'increase'
-                        ? 'border-green-500 bg-green-50 text-green-700'
-                        : 'border-gray-200 hover:border-gray-300'
+                      ? 'border-green-500 bg-green-50 text-green-700'
+                      : 'border-gray-200 hover:border-gray-300'
                       }`}
                   >
                     <i className="ri-add-line mr-2"></i>
                     Nhập kho
                   </button>
                   <button
+                    type="button"
                     onClick={() => setAdjustmentData({ ...adjustmentData, operation: 'decrease' })}
                     className={`py-3 px-4 rounded-lg border-2 font-medium transition-all ${adjustmentData.operation === 'decrease'
-                        ? 'border-red-500 bg-red-50 text-red-700'
-                        : 'border-gray-200 hover:border-gray-300'
+                      ? 'border-red-500 bg-red-50 text-red-700'
+                      : 'border-gray-200 hover:border-gray-300'
                       }`}
                   >
                     <i className="ri-subtract-line mr-2"></i>
@@ -365,6 +389,7 @@ const InventoryPage = () => {
                 </div>
               </div>
 
+              {/* Quantity */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Số lượng</label>
                 <input
@@ -377,6 +402,7 @@ const InventoryPage = () => {
                 />
               </div>
 
+              {/* Reason */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Lý do (tùy chọn)</label>
                 <textarea
@@ -388,10 +414,11 @@ const InventoryPage = () => {
                 />
               </div>
 
+              {/* Preview Result */}
               {adjustmentData.quantity && (
                 <div className={`rounded-xl p-4 border-2 ${adjustmentData.operation === 'increase'
-                    ? 'bg-green-50 border-green-200'
-                    : 'bg-red-50 border-red-200'
+                  ? 'bg-green-50 border-green-200'
+                  : 'bg-red-50 border-red-200'
                   }`}>
                   <p className={`text-sm font-medium ${adjustmentData.operation === 'increase' ? 'text-green-800' : 'text-red-800'
                     }`}>
@@ -407,14 +434,17 @@ const InventoryPage = () => {
               )}
             </div>
 
+            {/* Footer */}
             <div className="p-6 border-t border-gray-200 flex gap-3">
               <button
+                type="button"
                 onClick={() => setShowAdjustModal(false)}
                 className="flex-1 px-4 py-3 border-2 border-gray-300 rounded-lg hover:bg-gray-50 transition-colors font-medium"
               >
                 Hủy
               </button>
               <button
+                type="button"
                 onClick={submitStockAdjustment}
                 className="flex-1 px-4 py-3 bg-[#a67c52] text-white rounded-lg hover:bg-[#8b653d] transition-colors font-medium"
               >
