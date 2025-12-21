@@ -143,7 +143,6 @@ const Navbar = () => {
                         src={user.avatar}
                         alt={user.fullName}
                         className="w-full h-full object-cover"
-                        style={{ aspectRatio: '1 / 1' }}
                         onError={(e) => {
                           e.target.onerror = null; // Prevent infinite loop
                           e.target.src = "/user.png"; // Fallback to default avatar
@@ -156,7 +155,6 @@ const Navbar = () => {
                         src="/user.png"
                         alt="Default Avatar"
                         className="w-full h-full object-cover"
-                        style={{ aspectRatio: '1 / 1' }}
                       />
                     </div>
                   )}

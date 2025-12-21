@@ -125,14 +125,13 @@ const ProfilePage = () => {
       <div className="bg-white rounded-lg shadow-md p-6">
         {/* Avatar Section */}
         <div className="flex flex-col items-center mb-8">
-          <div className="relative w-32 h-32">
-            <div className="w-full h-full rounded-full overflow-hidden border-4 border-gray-200">
-              <img
-                src={avatarPreview || user.avatar || '/default-avatar.png'}
-                alt="Avatar"
-                className="w-full h-full object-cover"
-              />
-            </div>
+          <div className="relative">
+            <img
+              src={avatarPreview || user.avatar || '/default-avatar.png'}
+              alt="Avatar"
+              className="w-32 h-32 rounded-full object-cover border-4 border-gray-200"
+              style={{ aspectRatio: '1 / 1' }}
+            />
             <label
               htmlFor="avatar-upload"
               className="absolute bottom-0 right-0 bg-[#a67c52] text-white p-2 rounded-full cursor-pointer hover:bg-[#8b653d] transition-colors"

@@ -8,28 +8,23 @@ const ChatButton = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
 
-  // Only show for customers
-  if (!isAuthenticated || !user || user.role === 'admin' || user.role === 'staff') {
-    return null;
-  }
-
   useEffect(() => {
-    // Connect socket when component mounts
-    if (user?._id) {
+    // Only connect socket for customers
+    if (isAuthenticated && user && user.role !== 'admin' && user.role !== 'staff' && user._id) {
       socketService.connect(user._id);
-    }
 
-    // Listen for new messages
-    socketService.onNewMessage((data) => {
-      if (!isOpen) {
-        setUnreadCount(prev => prev + 1);
-      }
-    });
+      // Listen for new messages
+      socketService.onNewMessage((data) => {
+        if (!isOpen) {
+          setUnreadCount(prev => prev + 1);
+        }
+      });
+    }
 
     return () => {
       // Don't disconnect on unmount, keep connection alive
     };
-  }, [user, isOpen]);
+  }, [user, isOpen, isAuthenticated]);
 
   const handleOpen = () => {
     setIsOpen(true);
@@ -39,6 +34,11 @@ const ChatButton = () => {
   const handleClose = () => {
     setIsOpen(false);
   };
+
+  // Only show for customers - MUST be after all hooks
+  if (!isAuthenticated || !user || user.role === 'admin' || user.role === 'staff') {
+    return null;
+  }
 
   return (
     <>

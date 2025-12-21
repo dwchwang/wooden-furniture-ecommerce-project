@@ -9,21 +9,20 @@ const PaymentFailed = () => {
   const orderId = searchParams.get("orderId");
   const message = searchParams.get("message") || "Giao dịch không thành công";
 
-  // Countdown timer
   useEffect(() => {
     const timer = setInterval(() => {
-      setCountdown((prev) => prev - 1);
+      setCountdown((prev) => {
+        if (prev <= 1) {
+          clearInterval(timer);
+          navigate(`/orders/${orderId}`);
+          return 0;
+        }
+        return prev - 1;
+      });
     }, 1000);
 
     return () => clearInterval(timer);
-  }, []);
-
-  // Navigate when countdown reaches 0
-  useEffect(() => {
-    if (countdown <= 0) {
-      navigate(`/orders/${orderId}`);
-    }
-  }, [countdown, orderId, navigate]);
+  }, [orderId, navigate]);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">

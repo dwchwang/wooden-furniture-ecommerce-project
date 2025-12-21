@@ -30,19 +30,8 @@ const OrderDetailPage = () => {
         await fetchReviewedProducts(orderData);
       }
     } catch (error) {
-      console.error('Error fetching order:', error);
-
-      // Handle 403 Forbidden - likely auth issue
-      if (error.response?.status === 403) {
-        toast.error("Bạn không có quyền xem đơn hàng này");
-        navigate("/orders");
-      } else if (error.response?.status === 401) {
-        toast.error("Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại");
-        navigate("/login");
-      } else {
-        toast.error(error.message || "Không thể tải thông tin đơn hàng");
-        navigate("/orders");
-      }
+      toast.error(error.message || "Failed to fetch order details");
+      navigate("/orders");
     } finally {
       setLoading(false);
     }
