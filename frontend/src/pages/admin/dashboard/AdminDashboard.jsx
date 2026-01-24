@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import api from '../../../services/api';
+import chatService from '../../../services/chatService';
 
 const AdminDashboard = () => {
   const { user } = useSelector((state) => state.auth);
@@ -18,6 +19,7 @@ const AdminDashboard = () => {
   const [customersCount, setCustomersCount] = useState(0);
   const [productsCount, setProductsCount] = useState(0);
   const [recentOrders, setRecentOrders] = useState([]);
+  const [recentMessages, setRecentMessages] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -64,6 +66,20 @@ const AdminDashboard = () => {
         setRecentOrders(orders);
       } catch (error) {
         console.error('Error fetching recent orders:', error);
+      }
+
+      // Fetch recent chat conversations
+      try {
+        const conversationsResponse = await chatService.getAllConversations();
+        const conversations = conversationsResponse.data?.conversations || [];
+        // Get the 5 most recent conversations with messages
+        const recentConvos = conversations
+          .filter(conv => conv.lastMessage)
+          .sort((a, b) => new Date(b.lastMessage.createdAt) - new Date(a.lastMessage.createdAt))
+          .slice(0, 5);
+        setRecentMessages(recentConvos);
+      } catch (error) {
+        console.error('Error fetching recent messages:', error);
       }
     } catch (error) {
       console.error('Error fetching dashboard data:', error);
@@ -321,10 +337,47 @@ const AdminDashboard = () => {
               Xem tất cả →
             </Link>
           </div>
-          <div className="text-center py-8 text-gray-500">
-            <i className="ri-message-3-line text-4xl mb-2"></i>
-            <p>Chưa có tin nhắn nào</p>
-          </div>
+          {recentMessages.length > 0 ? (
+            <div className="space-y-4">
+              {recentMessages.map((conversation) => (
+                <Link
+                  key={conversation._id}
+                  to="/admin/chat"
+                  className="flex items-start gap-3 p-4 border border-gray-200 rounded-lg hover:border-[#a67c52] hover:bg-gray-50 transition-all"
+                >
+                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#a67c52] to-[#8b653d] flex items-center justify-center text-white font-bold flex-shrink-0">
+                    {conversation.customer?.fullName?.charAt(0).toUpperCase() || 'U'}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between mb-1">
+                      <p className="font-medium text-gray-900 truncate">
+                        {conversation.customer?.fullName || 'Khách hàng'}
+                      </p>
+                      <span className="text-xs text-gray-500 flex-shrink-0 ml-2">
+                        {new Date(conversation.lastMessage?.createdAt).toLocaleTimeString('vi-VN', {
+                          hour: '2-digit',
+                          minute: '2-digit'
+                        })}
+                      </span>
+                    </div>
+                    <p className="text-sm text-gray-600 truncate">
+                      {conversation.lastMessage?.content || 'Tin nhắn mới'}
+                    </p>
+                  </div>
+                  {conversation.unreadCount > 0 && (
+                    <span className="flex-shrink-0 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">
+                      {conversation.unreadCount}
+                    </span>
+                  )}
+                </Link>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-8 text-gray-500">
+              <i className="ri-message-3-line text-4xl mb-2"></i>
+              <p>Chưa có tin nhắn nào</p>
+            </div>
+          )}
         </div>
       </div>
     </div>

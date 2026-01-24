@@ -23,3 +23,13 @@
   --color-extra-light: #F5F3EF;
   /* Be rất nhạt - background section */
 }
+
+/* Hide scrollbar but keep scroll functionality */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}

@@ -14,6 +14,7 @@ const SingleProduct = () => {
   const { currentProduct: product, loading } = useSelector((state) => state.products);
   const [selectedImage, setSelectedImage] = useState(0);
   const [selectedVariant, setSelectedVariant] = useState(null);
+  const [thumbnailScrollPosition, setThumbnailScrollPosition] = useState(0);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -30,6 +31,51 @@ const SingleProduct = () => {
     }
   }, [product]);
 
+  // Get all images to display (general product images + all variant images)
+  const getAllImages = () => {
+    if (!product) return [];
+
+    const allImages = [];
+
+    // Add general product images first
+    if (product.images && product.images.length > 0) {
+      allImages.push(...product.images);
+    }
+
+    // Add all variant images (avoiding duplicates)
+    if (product.variants && product.variants.length > 0) {
+      product.variants.forEach(variant => {
+        if (variant.images && variant.images.length > 0) {
+          variant.images.forEach(img => {
+            if (!allImages.includes(img)) {
+              allImages.push(img);
+            }
+          });
+        }
+      });
+    }
+
+    return allImages;
+  };
+
+  const allImages = getAllImages();
+
+  // When variant changes, switch to the first image of that variant
+  useEffect(() => {
+    if (selectedVariant?.images?.length > 0) {
+      // Find the index of the first variant image in all images array
+      const firstVariantImageIndex = allImages.findIndex(
+        img => img === selectedVariant.images[0]
+      );
+      if (firstVariantImageIndex !== -1) {
+        setSelectedImage(firstVariantImageIndex);
+      }
+    } else if (product?.images?.length > 0) {
+      // If no variant selected, show first product image
+      setSelectedImage(0);
+    }
+  }, [selectedVariant]);
+
   const handleAddToCart = () => {
     if (!product) return;
 
@@ -37,7 +83,7 @@ const SingleProduct = () => {
       _id: product._id,
       name: product.name,
       price: selectedVariant ? selectedVariant.price : product.basePrice,
-      image: getImageUrl(product.images, selectedImage),
+      image: allImages[selectedImage] || allImages[0] || getImageUrl(product.images, 0),
       variant: selectedVariant ? {
         _id: selectedVariant._id,
         color: selectedVariant.color,
@@ -48,7 +94,23 @@ const SingleProduct = () => {
     };
 
     dispatch(addToCart(cartItem));
-    toast.success(`${product.name} added to cart!`);
+    toast.success(`Đã thêm ${product.name} vào giỏ hàng!`);
+  };
+
+  const displayImages = allImages;
+
+  // Scroll thumbnail carousel
+  const scrollThumbnails = (direction) => {
+    const container = document.getElementById('thumbnail-container');
+    if (container) {
+      const scrollAmount = 100; // Scroll by 100px
+      const newPosition = direction === 'left'
+        ? Math.max(0, thumbnailScrollPosition - scrollAmount)
+        : thumbnailScrollPosition + scrollAmount;
+
+      container.scrollTo({ left: newPosition, behavior: 'smooth' });
+      setThumbnailScrollPosition(newPosition);
+    }
   };
 
   if (loading) {
@@ -63,9 +125,9 @@ const SingleProduct = () => {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <h2 className="text-2xl font-semibold mb-4">Product not found</h2>
+          <h2 className="text-2xl font-semibold mb-4">Không tìm thấy sản phẩm</h2>
           <Link to="/shop" className="text-[#a67c52] hover:underline">
-            Back to Shop
+            Quay lại cửa hàng
           </Link>
         </div>
       </div>
@@ -78,11 +140,11 @@ const SingleProduct = () => {
         <h2 className="section__header capitalize">{product.name}</h2>
         <div className="section__subheader space-x-2 ">
           <span>
-            <Link to="/">Home</Link>
+            <Link to="/">Trang chủ</Link>
           </span>
           <i className="ri-arrow-right-s-line"></i>
           <span>
-            <Link to="/shop">Shop</Link>
+            <Link to="/shop">Cửa hàng</Link>
           </span>
           <i className="ri-arrow-right-s-line"></i>
           <span className="hover:text-primary cursor-pointer">
@@ -96,24 +158,58 @@ const SingleProduct = () => {
           {/* product images */}
           <div className="md:w-1/2 w-full">
             <img
-              src={getImageUrl(product.images, selectedImage)}
+              src={displayImages[selectedImage] || displayImages[0]}
               alt={product.name}
               className="rounded-md w-full h-[450px] object-cover mb-4"
             />
 
-            {/* Image thumbnails */}
-            {product.images && product.images.length > 1 && (
-              <div className="flex gap-2 overflow-x-auto">
-                {product.images.map((img, index) => (
-                  <img
-                    key={index}
-                    src={img}
-                    alt={`${product.name} ${index + 1}`}
-                    className={`w-20 h-20 object-cover rounded cursor-pointer border-2 ${selectedImage === index ? 'border-[#a67c52]' : 'border-gray-200'
-                      }`}
-                    onClick={() => setSelectedImage(index)}
-                  />
-                ))}
+            {/* Image thumbnails with scroll buttons */}
+            {displayImages && displayImages.length > 1 && (
+              <div className="relative">
+                {/* Left scroll button - only show when there are many images */}
+                {displayImages.length > 5 && (
+                  <button
+                    onClick={() => scrollThumbnails('left')}
+                    className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white hover:bg-[#a67c52] hover:text-white rounded-full p-1.5 shadow-lg border border-gray-200 transition-all"
+                  >
+                    <i className="ri-arrow-left-s-line text-lg"></i>
+                  </button>
+                )}
+
+                {/* Thumbnail container */}
+                <div
+                  id="thumbnail-container"
+                  className={`flex gap-2 overflow-x-auto scrollbar-hide ${displayImages.length > 5 ? 'px-10' : ''}`}
+                  style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+                >
+                  {displayImages.map((img, index) => (
+                    <div
+                      key={index}
+                      onClick={() => setSelectedImage(index)}
+                      className={`w-20 h-20 flex-shrink-0 rounded cursor-pointer border-2 transition-all overflow-hidden ${selectedImage === index
+                        ? 'border-[#a67c52] scale-110'
+                        : 'border-gray-200 hover:border-[#a67c52]/50'
+                        }`}
+                      style={{ minWidth: '80px', minHeight: '80px', maxWidth: '80px', maxHeight: '80px' }}
+                    >
+                      <img
+                        src={img}
+                        alt={`${product.name} ${index + 1}`}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                  ))}
+                </div>
+
+                {/* Right scroll button - only show when there are many images */}
+                {displayImages.length > 5 && (
+                  <button
+                    onClick={() => scrollThumbnails('right')}
+                    className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white hover:bg-[#a67c52] hover:text-white rounded-full p-1.5 shadow-lg border border-gray-200 transition-all"
+                  >
+                    <i className="ri-arrow-right-s-line text-lg"></i>
+                  </button>
+                )}
               </div>
             )}
           </div>
@@ -131,7 +227,7 @@ const SingleProduct = () => {
             {/* Variants */}
             {product.variants && product.variants.length > 0 && (
               <div className="mb-6">
-                <h4 className="font-semibold mb-2">Select Variant:</h4>
+                <h4 className="font-semibold mb-2">Chọn phiên bản:</h4>
                 <div className="flex flex-wrap gap-2">
                   {product.variants.map((variant) => (
                     <button
@@ -151,9 +247,14 @@ const SingleProduct = () => {
                   ))}
                 </div>
                 {selectedVariant && (
-                  <p className="text-sm text-gray-600 mt-2">
-                    Stock: {selectedVariant.stock} available
-                  </p>
+                  <>
+                    <p className="text-sm text-gray-600 mt-2">
+                      <strong>Kho:</strong> {selectedVariant.stock} sản phẩm có sẵn
+                    </p>
+                    <p className="text-sm text-gray-600">
+                      <strong>Đã bán:</strong> {product.soldCount || 0} sản phẩm
+                    </p>
+                  </>
                 )}
               </div>
             )}
@@ -162,30 +263,30 @@ const SingleProduct = () => {
             <div className="space-y-2 mb-6">
               {product.category && (
                 <p>
-                  <strong>Category:</strong> {product.category.name}
+                  <strong>Danh mục:</strong> {product.category.name}
                 </p>
               )}
               {product.material && (
                 <p>
-                  <strong>Material:</strong> {product.material}
+                  <strong>Chất liệu:</strong> {product.material}
                 </p>
               )}
               {product.dimensions && (
                 <p>
-                  <strong>Dimensions:</strong> {product.dimensions.length} x{' '}
+                  <strong>Kích thước:</strong> {product.dimensions.length} x{' '}
                   {product.dimensions.width} x {product.dimensions.height} cm
                 </p>
               )}
               {product.weight && (
                 <p>
-                  <strong>Weight:</strong> {product.weight} kg
+                  <strong>Trọng lượng:</strong> {product.weight} kg
                 </p>
               )}
               <div className="flex gap-2 items-center">
-                <strong>Rating:</strong>
+                <strong>Đánh giá:</strong>
                 <RatingStars rating={product.averageRating || 0} />
                 <span className="text-sm text-gray-600">
-                  ({product.totalReviews || 0} reviews)
+                  ({product.totalReviews || 0} đánh giá)
                 </span>
               </div>
             </div>
@@ -196,8 +297,8 @@ const SingleProduct = () => {
               className="px-6 py-3 bg-[#a67c52] text-white rounded-md hover:bg-[#8b653d] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {selectedVariant && selectedVariant.stock === 0
-                ? 'Out of Stock'
-                : 'Add to Cart'}
+                ? 'Hết hàng'
+                : 'Thêm vào giỏ hàng'}
             </button>
           </div>
         </div>

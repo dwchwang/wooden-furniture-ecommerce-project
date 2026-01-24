@@ -1,4 +1,5 @@
 import Order from "../models/order.model.js";
+import Product from "../models/product.model.js";
 import ProductVariant from "../models/product-variant.model.js";
 import Voucher from "../models/voucher.model.js";
 import { asyncHandler } from "../utils/async-handler.js";
@@ -80,20 +81,20 @@ const createOrder = asyncHandler(async (req, res) => {
       }).session(session);
 
       if (!voucher) {
-        throw new ApiError(404, "Voucher not found");
+        throw new ApiError(404, "Không tìm thấy mã giảm giá");
       }
 
       if (!voucher.isActive) {
-        throw new ApiError(400, "Voucher is not active");
+        throw new ApiError(400, "Mã giảm giá không còn hiệu lực");
       }
 
       const now = new Date();
       if (now < voucher.startDate || now > voucher.endDate) {
-        throw new ApiError(400, "Voucher is not valid at this time");
+        throw new ApiError(400, "Mã giảm giá không hợp lệ vào thời điểm này");
       }
 
       if (voucher.usageLimit && voucher.usedCount >= voucher.usageLimit) {
-        throw new ApiError(400, "Voucher usage limit reached");
+        throw new ApiError(400, "Mã giảm giá đã hết lượt sử dụng");
       }
 
       if (subtotal < voucher.minOrderValue) {
@@ -146,6 +147,15 @@ const createOrder = asyncHandler(async (req, res) => {
       ],
       { session }
     );
+
+    // Update soldCount for each product
+    for (const item of orderItems) {
+      await Product.findByIdAndUpdate(
+        item.product,
+        { $inc: { soldCount: item.quantity } },
+        { session }
+      );
+    }
 
     // Commit transaction
     await session.commitTransaction();
@@ -406,6 +416,15 @@ const cancelOrder = asyncHandler(async (req, res) => {
         voucher.usedCount -= 1;
         await voucher.save({ session });
       }
+    }
+
+    // Decrease soldCount for each product
+    for (const item of order.items) {
+      await Product.findByIdAndUpdate(
+        item.product,
+        { $inc: { soldCount: -item.quantity } },
+        { session }
+      );
     }
 
     // Update order status

@@ -107,9 +107,9 @@ const ShopPage = () => {
   return (
     <>
       <section className="section__container bg-primary-light">
-        <h2 className="section__header capitalize">Shop Page</h2>
+        <h2 className="section__header capitalize">Cửa hàng</h2>
         <p className="section__subheader">
-          Discover our premium collection of handcrafted wooden furniture
+          Khám phá bộ sưu tập nội thất gỗ thủ công cao cấp
         </p>
       </section>
 
@@ -127,9 +127,9 @@ const ShopPage = () => {
           <div className="flex-1">
             <h3 className="text-xl font-medium mb-6">
               {loading ? (
-                "Loading products..."
+                "Đang tải sản phẩm..."
               ) : (
-                `Products Available: ${products.length}`
+                `Sản phẩm có sẵn: ${products.length}`
               )}
             </h3>
 
@@ -139,12 +139,12 @@ const ShopPage = () => {
               </div>
             ) : products.length === 0 ? (
               <div className="text-center py-12">
-                <p className="text-gray-500 text-lg">No products found</p>
+                <p className="text-gray-500 text-lg">Không tìm thấy sản phẩm</p>
                 <button
                   onClick={clearFilter}
                   className="mt-4 px-6 py-2 bg-[#a67c52] text-white rounded-lg hover:bg-[#8b653d]"
                 >
-                  Clear Filters
+                  Xóa bộ lọc
                 </button>
               </div>
             ) : (

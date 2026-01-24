@@ -36,7 +36,7 @@ const Login = () => {
     e.preventDefault();
 
     if (!email || !password) {
-      toast.error("Please fill in all fields");
+      toast.error("Vui lòng điền đầy đủ thông tin");
       return;
     }
 
@@ -53,10 +53,10 @@ const Login = () => {
 
         {/* Title */}
         <h2 className="text-2xl font-semibold text-center text-[#4a3b2c] mb-2">
-          Welcome Back 👋
+          Chào mừng trở lại 👋
         </h2>
         <p className="text-sm text-center text-[#6b5b4d] mb-8">
-          Please sign in to your account
+          Vui lòng đăng nhập vào tài khoản của bạn
         </p>
 
         {/* Form */}
@@ -67,7 +67,7 @@ const Login = () => {
             </label>
             <input
               type="email"
-              placeholder="Email Address"
+              placeholder="Địa chỉ Email"
               required
               autoComplete="username"
               value={email}
@@ -79,11 +79,11 @@ const Login = () => {
 
           <div>
             <label className="block text-sm font-medium text-[#4a3b2c] mb-1">
-              Password
+              Mật khẩu
             </label>
             <input
               type="password"
-              placeholder="Password"
+              placeholder="Mật khẩu"
               required
               autoComplete="current-password"
               value={password}
@@ -95,10 +95,10 @@ const Login = () => {
 
           <div className="flex justify-between items-center text-sm">
             <label className="flex items-center gap-2 text-[#6b5b4d]">
-              <input type="checkbox" className="accent-[#a67c52]" /> Remember me
+              <input type="checkbox" className="accent-[#a67c52]" /> Ghi nhớ đăng nhập
             </label>
             <a href="#" className="text-[#a67c52] hover:underline">
-              Forgot password?
+              Quên mật khẩu?
             </a>
           </div>
 
@@ -107,17 +107,17 @@ const Login = () => {
             disabled={loading}
             className="w-full bg-[#a67c52] text-white font-medium py-2 rounded-lg hover:bg-[#8b653d] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {loading ? "Signing in..." : "Sign In"}
+            {loading ? "Đang đăng nhập..." : "Đăng nhập"}
           </button>
         </form>
 
         <p className="text-sm text-center text-[#6b5b4d] mt-6 italic">
-          Don't have an account?{" "}
+          Chưa có tài khoản?{" "}
           <Link
             to="/register"
             className="relative text-[#a67c52] font-semibold after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-0 after:h-[1px] after:bg-[#a67c52] hover:after:w-full after:transition-all after:duration-300 "
           >
-            Register here
+            Đăng ký ngay
           </Link>
           .
         </p>

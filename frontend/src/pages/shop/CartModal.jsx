@@ -42,7 +42,7 @@ const CartModal = ({ products, isOpen, onClose }) => {
       >
         <div className="p-4 mt-4">
           <div className="flex justify-between items-center mb-6">
-            <h4 className="text-xl font-semibold text-primary">Your Cart</h4>
+            <h4 className="text-xl font-semibold text-primary">Giỏ hàng của bạn</h4>
             <button
               className="text-gray-600 hover:text-gray-900 cursor-pointer "
               onClick={() => onClose()}
@@ -54,7 +54,7 @@ const CartModal = ({ products, isOpen, onClose }) => {
           {/* cart details */}
           <div className="cart-items">
             {products.length === 0 ? (
-              <div>Your cart is empty</div>
+              <div>Giỏ hàng của bạn đang trống</div>
             ) : (
               products.map((item, index) => (
                 <div
@@ -106,7 +106,7 @@ const CartModal = ({ products, isOpen, onClose }) => {
                         className="text-red-500 hover:text-red-800 mr-2 cursor-pointer"
                         onClick={(e) => handleRemoveItem(e, item._id)}
                       >
-                        Remove
+                        Xóa
                       </button>
                     </div>
                   </div>
@@ -123,7 +123,7 @@ const CartModal = ({ products, isOpen, onClose }) => {
                 onClick={handleCheckout}
                 className="w-full mt-4 px-6 py-3 bg-[#a67c52] text-white rounded-lg hover:bg-[#8b653d] font-semibold transition-colors"
               >
-                Proceed to Checkout
+                Tiến hành thanh toán
               </button>
             </>
           )}

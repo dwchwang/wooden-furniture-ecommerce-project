@@ -16,7 +16,7 @@ const Register = () => {
 
   useEffect(() => {
     if (isAuthenticated) {
-      toast.success("Registration successful! Welcome!");
+      toast.success("Đăng ký thành công! Chào mừng bạn!");
       navigate("/");
     }
   }, [isAuthenticated, navigate]);
@@ -32,12 +32,12 @@ const Register = () => {
     e.preventDefault();
 
     if (!fullName || !email || !password) {
-      toast.error("Please fill in all required fields");
+      toast.error("Vui lòng điền đầy đủ thông tin bắt buộc");
       return;
     }
 
     if (password.length < 6) {
-      toast.error("Password must be at least 6 characters");
+      toast.error("Mật khẩu phải có ít nhất 6 ký tự");
       return;
     }
 
@@ -54,21 +54,21 @@ const Register = () => {
 
         {/* Title */}
         <h2 className="text-2xl font-semibold text-center text-[#4a3b2c] mb-2">
-          Create Your Account ✨
+          Tạo tài khoản ✨
         </h2>
         <p className="text-sm text-center text-[#6b5b4d] mb-8">
-          Join us and explore premium furniture collections.
+          Tham gia cùng chúng tôi và khám phá bộ sưu tập nội thất cao cấp.
         </p>
 
         {/* Form */}
         <form className="space-y-5" onSubmit={handleRegister}>
           <div>
             <label className="block text-sm font-medium text-[#4a3b2c] mb-1">
-              Full Name <span className="text-red-500">*</span>
+              Họ và tên <span className="text-red-500">*</span>
             </label>
             <input
               type="text"
-              placeholder="Your full name"
+              placeholder="Nhập họ và tên"
               required
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
@@ -83,7 +83,7 @@ const Register = () => {
             </label>
             <input
               type="email"
-              placeholder="Email Address"
+              placeholder="Địa chỉ Email"
               required
               autoComplete="email"
               value={email}
@@ -95,11 +95,11 @@ const Register = () => {
 
           <div>
             <label className="block text-sm font-medium text-[#4a3b2c] mb-1">
-              Phone (Optional)
+              Số điện thoại (Tùy chọn)
             </label>
             <input
               type="tel"
-              placeholder="Phone number"
+              placeholder="Nhập số điện thoại"
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
               disabled={loading}
@@ -109,11 +109,11 @@ const Register = () => {
 
           <div>
             <label className="block text-sm font-medium text-[#4a3b2c] mb-1">
-              Password <span className="text-red-500">*</span>
+              Mật khẩu <span className="text-red-500">*</span>
             </label>
             <input
               type="password"
-              placeholder="Password (min 6 characters)"
+              placeholder="Mật khẩu (tối thiểu 6 ký tự)"
               required
               autoComplete="new-password"
               value={password}
@@ -128,18 +128,18 @@ const Register = () => {
             disabled={loading}
             className="w-full bg-[#a67c52] text-white font-medium py-2 rounded-lg hover:bg-[#8b653d] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {loading ? "Creating account..." : "Sign Up"}
+            {loading ? "Đang tạo tài khoản..." : "Đăng ký"}
           </button>
         </form>
 
         {/* Footer */}
         <p className="text-sm text-center text-[#6b5b4d] mt-6 italic">
-          Already have an account?{" "}
+          Đã có tài khoản?{" "}
           <Link
             to="/login"
             className="relative text-[#a67c52] font-semibold after:content-[''] after:absolute after:left-0 after:-bottom-0.5 after:w-0 after:h-[1px] after:bg-[#a67c52] hover:after:w-full after:transition-all after:duration-300 "
           >
-            Login here
+            Đăng nhập ngay
           </Link>
           .
         </p>

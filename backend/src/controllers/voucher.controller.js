@@ -121,26 +121,26 @@ const validateVoucher = asyncHandler(async (req, res) => {
   const voucher = await Voucher.findOne({ code: code.toUpperCase() });
 
   if (!voucher) {
-    throw new ApiError(404, "Voucher not found");
+    throw new ApiError(404, "Không tìm thấy mã giảm giá");
   }
 
   // Check if voucher is active
   if (!voucher.isActive) {
-    throw new ApiError(400, "Voucher is not active");
+    throw new ApiError(400, "Mã giảm giá không còn hiệu lực");
   }
 
   // Check date validity
   const now = new Date();
   if (now < voucher.startDate) {
-    throw new ApiError(400, "Voucher is not yet valid");
+    throw new ApiError(400, "Mã giảm giá chưa có hiệu lực");
   }
   if (now > voucher.endDate) {
-    throw new ApiError(400, "Voucher has expired");
+    throw new ApiError(400, "Mã giảm giá đã hết hạn");
   }
 
   // Check usage limit
   if (voucher.usageLimit && voucher.usedCount >= voucher.usageLimit) {
-    throw new ApiError(400, "Voucher usage limit reached");
+    throw new ApiError(400, "Mã giảm giá đã hết lượt sử dụng");
   }
 
   // Check minimum order value

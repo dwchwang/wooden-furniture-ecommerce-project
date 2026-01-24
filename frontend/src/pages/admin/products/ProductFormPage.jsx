@@ -186,6 +186,57 @@ const ProductFormPage = () => {
     setVariants(variants.filter((_, i) => i !== index));
   };
 
+  const handleVariantImageUpload = async (variantIndex, e) => {
+    const files = Array.from(e.target.files);
+    const currentVariant = variants[variantIndex];
+    const currentImages = currentVariant.images || [];
+
+    if (files.length + currentImages.length > 5) {
+      toast.error('Tối đa 5 ảnh cho mỗi phiên bản');
+      return;
+    }
+
+    setUploading(true);
+    try {
+      const uploadPromises = files.map(async (file) => {
+        const formDataUpload = new FormData();
+        formDataUpload.append('image', file);
+        const response = await api.post('/upload/image', formDataUpload, {
+          headers: { 'Content-Type': 'multipart/form-data' }
+        });
+        let imageUrl = response.data?.image?.url;
+
+        // If URL is a local path, prepend backend URL
+        if (imageUrl && !imageUrl.startsWith('http')) {
+          const backendUrl = import.meta.env.VITE_API_URL?.replace('/api/v1', '') || 'http://localhost:8000';
+          imageUrl = `${backendUrl}/${imageUrl}`;
+        }
+
+        return imageUrl;
+      });
+
+      const urls = await Promise.all(uploadPromises);
+      const validUrls = urls.filter(url => url);
+
+      const newVariants = [...variants];
+      newVariants[variantIndex].images = [...currentImages, ...validUrls];
+      setVariants(newVariants);
+
+      toast.success(`Upload ${validUrls.length} ảnh thành công`);
+    } catch (error) {
+      console.error('Upload error:', error);
+      toast.error('Lỗi khi upload ảnh');
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const removeVariantImage = (variantIndex, imageIndex) => {
+    const newVariants = [...variants];
+    newVariants[variantIndex].images = newVariants[variantIndex].images.filter((_, i) => i !== imageIndex);
+    setVariants(newVariants);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -535,6 +586,47 @@ const ProductFormPage = () => {
                       placeholder="Auto-generate"
                     />
                   </div>
+                </div>
+
+                {/* Variant Images */}
+                <div className="mt-4">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Hình ảnh phiên bản (tối đa 5 ảnh)
+                  </label>
+                  <div className="mb-3">
+                    <label className="block w-full px-4 py-4 border-2 border-dashed border-gray-300 rounded-lg text-center cursor-pointer hover:border-[#a67c52] transition-colors">
+                      <i className="ri-image-add-line text-2xl text-gray-400 mb-1"></i>
+                      <p className="text-sm text-gray-600">Click để upload ảnh cho phiên bản này</p>
+                      <input
+                        type="file"
+                        multiple
+                        accept="image/*"
+                        onChange={(e) => handleVariantImageUpload(index, e)}
+                        className="hidden"
+                        disabled={uploading || (variant.images?.length >= 5)}
+                      />
+                    </label>
+                  </div>
+                  {variant.images && variant.images.length > 0 && (
+                    <div className="grid grid-cols-2 md:grid-cols-5 gap-2">
+                      {variant.images.map((url, imgIndex) => (
+                        <div key={imgIndex} className="relative group">
+                          <img
+                            src={url}
+                            alt={`Variant ${index + 1} - Image ${imgIndex + 1}`}
+                            className="w-full h-20 object-cover rounded-lg"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => removeVariantImage(index, imgIndex)}
+                            className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                          >
+                            <i className="ri-close-line text-xs"></i>
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </div>
             ))}
