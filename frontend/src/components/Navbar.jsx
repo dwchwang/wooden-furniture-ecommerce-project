@@ -4,6 +4,7 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import { logoutUser } from "../redux/features/auth/authSlice";
 import CartModal from "../pages/shop/CartModal";
 import { toast } from "react-toastify";
+import { getImageUrl } from "../utils/imageUtils";
 
 const Navbar = () => {
   const dispatch = useDispatch();
@@ -140,7 +141,7 @@ const Navbar = () => {
                   {user.avatar ? (
                     <div className="w-10 h-10 flex-shrink-0 rounded-full overflow-hidden border-2 border-[#a67c52]">
                       <img
-                        src={user.avatar}
+                        src={getImageUrl(user.avatar)}
                         alt={user.fullName}
                         className="w-full h-full object-cover"
                         style={{ aspectRatio: '1 / 1' }}

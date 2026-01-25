@@ -148,7 +148,7 @@ const checkCanReview = asyncHandler(async (req, res) => {
         200,
         {
           canReview: false,
-          reason: "You must purchase and receive this product to review it",
+          reason: "Bạn phải mua và nhận sản phẩm này để đánh giá",
         },
         "Cannot review"
       )
@@ -171,7 +171,7 @@ const checkCanReview = asyncHandler(async (req, res) => {
         200,
         {
           canReview: false,
-          reason: "You have already reviewed this product for all your orders",
+          reason: "Bạn đã đánh giá sản phẩm này cho tất cả đơn hàng của bạn",
         },
         "Cannot review"
       )

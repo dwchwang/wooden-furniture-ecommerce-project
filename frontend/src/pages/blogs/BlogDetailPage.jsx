@@ -4,6 +4,7 @@ import { useParams, Link } from 'react-router-dom';
 import { fetchBlogBySlug, clearCurrentBlog } from '../../redux/features/blogs/blogsSlice';
 import { formatDistanceToNow } from 'date-fns';
 import { vi } from 'date-fns/locale';
+import { getImageUrl } from '../../utils/imageUtils';
 
 const BlogDetailPage = () => {
   const { slug } = useParams();
@@ -83,7 +84,7 @@ const BlogDetailPage = () => {
               <div className="flex items-center gap-3">
                 <div className="w-12 h-12 rounded-full overflow-hidden flex-shrink-0 bg-gray-200">
                   <img
-                    src={currentBlog.author?.avatar || '/user.png'}
+                    src={getImageUrl(currentBlog.author?.avatar) || '/user.png'}
                     alt={currentBlog.author?.fullName}
                     className="w-full h-full object-cover"
                     onError={(e) => {

@@ -4,6 +4,7 @@ import { Link, useSearchParams } from 'react-router-dom';
 import { fetchBlogs } from '../../redux/features/blogs/blogsSlice';
 import { formatDistanceToNow } from 'date-fns';
 import { vi } from 'date-fns/locale';
+import { getImageUrl } from '../../utils/imageUtils';
 
 const BlogListPage = () => {
   const dispatch = useDispatch();
@@ -152,7 +153,7 @@ const BlogListPage = () => {
                           <div className="flex items-center gap-2">
                             <div className="w-6 h-6 rounded-full overflow-hidden flex-shrink-0">
                               <img
-                                src={blog.author?.avatar || '/user.png'}
+                                src={getImageUrl(blog.author?.avatar) || '/user.png'}
                                 alt={blog.author?.fullName}
                                 className="w-full h-full object-cover"
                                 style={{ aspectRatio: '1 / 1' }}

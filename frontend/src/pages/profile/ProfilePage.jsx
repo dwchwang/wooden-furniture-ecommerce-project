@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { toast } from 'react-toastify';
 import userService from '../../services/userService';
 import { setUser } from '../../redux/features/auth/authSlice';
+import { getImageUrl } from '../../utils/imageUtils';
 
 const ProfilePage = () => {
   const dispatch = useDispatch();
@@ -128,7 +129,7 @@ const ProfilePage = () => {
           <div className="relative w-32 h-32">
             <div className="w-full h-full rounded-full overflow-hidden border-4 border-gray-200">
               <img
-                src={avatarPreview || user.avatar || '/default-avatar.png'}
+                src={avatarPreview || getImageUrl(user.avatar) || '/default-avatar.png'}
                 alt="Avatar"
                 className="w-full h-full object-cover"
               />

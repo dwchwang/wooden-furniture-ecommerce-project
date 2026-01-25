@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import api from '../../../services/api';
+import { getImageUrl } from '../../../utils/imageUtils';
 
 const UsersPage = () => {
   const [users, setUsers] = useState([]);
@@ -250,7 +251,7 @@ const UsersPage = () => {
                       <div className="flex items-center">
                         <div className="w-10 h-10 rounded-full overflow-hidden flex-shrink-0 mr-3 bg-gray-200">
                           <img
-                            src={user.avatar || '/user.png'}
+                            src={getImageUrl(user.avatar) || '/user.png'}
                             alt={user.fullName}
                             className="w-full h-full object-cover"
                             onError={(e) => {

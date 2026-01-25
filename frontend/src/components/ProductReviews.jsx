@@ -6,6 +6,7 @@ import ReviewForm from './ReviewForm';
 import { toast } from 'react-toastify';
 import { formatDistanceToNow } from 'date-fns';
 import { vi } from 'date-fns/locale';
+import { getImageUrl } from '../utils/imageUtils';
 
 const ProductReviews = ({ productId }) => {
   const dispatch = useDispatch();
@@ -214,7 +215,7 @@ const ProductReviews = ({ productId }) => {
                 <div className="flex-shrink-0">
                   {review.user?.avatar ? (
                     <img
-                      src={review.user.avatar}
+                      src={getImageUrl(review.user.avatar)}
                       alt={review.user.fullName}
                       className="w-14 h-14 aspect-square rounded-full object-cover ring-2 ring-gray-100"
                       onError={(e) => {
