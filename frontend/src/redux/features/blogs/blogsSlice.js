@@ -47,7 +47,7 @@ const blogsSlice = createSlice({
       currentPage: 1,
       totalPages: 1,
       totalBlogs: 0,
-      limit: 10
+      limit: 6
     },
     loading: false,
     error: null

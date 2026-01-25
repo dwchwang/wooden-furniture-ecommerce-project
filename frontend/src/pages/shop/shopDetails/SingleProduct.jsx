@@ -25,11 +25,8 @@ const SingleProduct = () => {
     };
   }, [id, dispatch]);
 
-  useEffect(() => {
-    if (product && product.variants && product.variants.length > 0) {
-      setSelectedVariant(product.variants[0]);
-    }
-  }, [product]);
+  // Don't auto-select variant - let user choose
+  // This ensures the general product image is shown first
 
   // Get all images to display (general product images + all variant images)
   const getAllImages = () => {
@@ -61,6 +58,7 @@ const SingleProduct = () => {
   const allImages = getAllImages();
 
   // When variant changes, switch to the first image of that variant
+  // Only if variant is explicitly selected (not null)
   useEffect(() => {
     if (selectedVariant?.images?.length > 0) {
       // Find the index of the first variant image in all images array
@@ -70,9 +68,6 @@ const SingleProduct = () => {
       if (firstVariantImageIndex !== -1) {
         setSelectedImage(firstVariantImageIndex);
       }
-    } else if (product?.images?.length > 0) {
-      // If no variant selected, show first product image
-      setSelectedImage(0);
     }
   }, [selectedVariant]);
 

@@ -21,6 +21,9 @@ const ShopPage = () => {
     sort: "-createdAt",
   });
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const productsPerPage = 9;
+
   // Read URL query parameters on mount
   useEffect(() => {
     const typeFromUrl = searchParams.get('type');
@@ -43,11 +46,16 @@ const ShopPage = () => {
     dispatch(fetchCategories(true)); // Only active categories
   }, [dispatch]);
 
-  // Fetch products when filters change
+  // Reset to page 1 when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [filtersState]);
+
+  // Fetch products when filters or page changes
   useEffect(() => {
     const filters = {
-      page: 1,
-      limit: 12,
+      page: currentPage,
+      limit: productsPerPage,
       isActive: true,
     };
 
@@ -60,7 +68,10 @@ const ShopPage = () => {
 
     console.log('ShopPage filters:', filters); // DEBUG
     dispatch(fetchProducts(filters));
-  }, [dispatch, filtersState]);
+
+    // Scroll to top when page changes
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [dispatch, filtersState, currentPage, productsPerPage]);
 
   const clearFilter = () => {
     setFiltersState({
@@ -148,7 +159,74 @@ const ShopPage = () => {
                 </button>
               </div>
             ) : (
-              <ProductCards products={products} />
+              <>
+                <ProductCards products={products} />
+
+                {/* Pagination */}
+                {products.length > 0 && (
+                  <div className="flex justify-center items-center gap-2 mt-8">
+                    <button
+                      onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                      disabled={currentPage === 1}
+                      className="px-4 py-2 rounded-lg border border-gray-300 hover:bg-[#a67c52] hover:text-white disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-transparent disabled:hover:text-gray-700 transition-colors"
+                    >
+                      <i className="ri-arrow-left-s-line"></i>
+                    </button>
+
+                    <div className="flex gap-2">
+                      {/* Show page numbers */}
+                      {currentPage > 2 && (
+                        <>
+                          <button
+                            onClick={() => setCurrentPage(1)}
+                            className="px-4 py-2 rounded-lg border border-gray-300 hover:bg-[#a67c52] hover:text-white transition-colors"
+                          >
+                            1
+                          </button>
+                          {currentPage > 3 && <span className="px-2 py-2">...</span>}
+                        </>
+                      )}
+
+                      {currentPage > 1 && (
+                        <button
+                          onClick={() => setCurrentPage(currentPage - 1)}
+                          className="px-4 py-2 rounded-lg border border-gray-300 hover:bg-[#a67c52] hover:text-white transition-colors"
+                        >
+                          {currentPage - 1}
+                        </button>
+                      )}
+
+                      <button
+                        className="px-4 py-2 rounded-lg bg-[#a67c52] text-white font-semibold"
+                      >
+                        {currentPage}
+                      </button>
+
+                      {products.length === productsPerPage && (
+                        <>
+                          <button
+                            onClick={() => setCurrentPage(currentPage + 1)}
+                            className="px-4 py-2 rounded-lg border border-gray-300 hover:bg-[#a67c52] hover:text-white transition-colors"
+                          >
+                            {currentPage + 1}
+                          </button>
+                          {products.length === productsPerPage && (
+                            <span className="px-2 py-2">...</span>
+                          )}
+                        </>
+                      )}
+                    </div>
+
+                    <button
+                      onClick={() => setCurrentPage(prev => prev + 1)}
+                      disabled={products.length < productsPerPage}
+                      className="px-4 py-2 rounded-lg border border-gray-300 hover:bg-[#a67c52] hover:text-white disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-transparent disabled:hover:text-gray-700 transition-colors"
+                    >
+                      <i className="ri-arrow-right-s-line"></i>
+                    </button>
+                  </div>
+                )}
+              </>
             )}
           </div>
         </div>

@@ -79,8 +79,9 @@ const AdminOrdersPage = () => {
     );
   };
 
-  const getPaymentStatusBadge = (status) => {
-    return status === 'paid' ? (
+  const getPaymentStatusBadge = (order) => {
+    const isPaid = order.paymentStatus === 'paid' || (order.orderStatus === 'delivered' && order.paymentMethod === 'COD');
+    return isPaid ? (
       <span className="px-2 py-1 text-xs font-medium bg-green-100 text-green-700 rounded-full">
         Đã thanh toán
       </span>
@@ -229,7 +230,7 @@ const AdminOrdersPage = () => {
                         {getStatusBadge(order.orderStatus)}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        {getPaymentStatusBadge(order.paymentStatus)}
+                        {getPaymentStatusBadge(order)}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                         {formatDistanceToNow(new Date(order.createdAt), {

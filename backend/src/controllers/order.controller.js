@@ -344,6 +344,11 @@ const updateOrderStatus = asyncHandler(async (req, res) => {
       throw new ApiError(400, "Cannot update status of delivered order");
     }
     order.orderStatus = orderStatus;
+
+    // Automatically set payment status to paid if order is delivered
+    if (orderStatus === "delivered") {
+      order.paymentStatus = "paid";
+    }
   }
 
   if (paymentStatus !== undefined) {

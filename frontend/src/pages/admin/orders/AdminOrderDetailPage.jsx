@@ -225,9 +225,9 @@ const AdminOrderDetailPage = () => {
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-sm text-gray-600">Thanh toán:</span>
-                <span className={`px-3 py-1 text-xs font-medium rounded-full ${order.paymentStatus === 'paid' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-700'
+                <span className={`px-3 py-1 text-xs font-medium rounded-full ${(order.paymentStatus === 'paid' || (order.orderStatus === 'delivered' && order.paymentMethod === 'COD')) ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-700'
                   }`}>
-                  {order.paymentStatus === 'paid' ? 'Đã thanh toán' : 'Chưa thanh toán'}
+                  {(order.paymentStatus === 'paid' || (order.orderStatus === 'delivered' && order.paymentMethod === 'COD')) ? 'Đã thanh toán' : 'Chưa thanh toán'}
                 </span>
               </div>
             </div>

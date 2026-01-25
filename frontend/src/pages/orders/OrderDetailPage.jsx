@@ -172,13 +172,25 @@ const OrderDetailPage = () => {
             <p className="text-gray-600">Đặt ngày {formatDate(order.createdAt)}</p>
           </div>
           <div className="mt-4 md:mt-0">
-            <span
-              className={`px-4 py-2 rounded-full text-sm font-semibold ${getStatusColor(
-                order.orderStatus
-              )}`}
-            >
-              {order.orderStatus.toUpperCase()}
-            </span>
+            {(() => {
+              const statusTranslations = {
+                pending: "Chờ xử lý",
+                confirmed: "Đã xác nhận",
+                processing: "Đang xử lý",
+                shipping: "Đang giao hàng",
+                delivered: "Đã giao hàng",
+                cancelled: "Đã hủy"
+              };
+              return (
+                <span
+                  className={`px-4 py-2 rounded-full text-sm font-semibold ${getStatusColor(
+                    order.orderStatus
+                  )}`}
+                >
+                  {statusTranslations[order.orderStatus] || order.orderStatus.toUpperCase()}
+                </span>
+              );
+            })()}
           </div>
         </div>
       </div>
@@ -388,12 +400,12 @@ const OrderDetailPage = () => {
                 <div className="flex justify-between">
                   <span className="text-gray-600">Trạng thái thanh toán:</span>
                   <span
-                    className={`font-semibold ${order.paymentStatus === "paid"
+                    className={`font-semibold ${(order.paymentStatus === "paid" || (order.orderStatus === "delivered" && order.paymentMethod === "COD"))
                       ? "text-green-600"
                       : "text-yellow-600"
                       }`}
                   >
-                    {order.paymentStatus === "paid" ? "ĐÃ THANH TOÁN" : "CHƯA THANH TOÁN"}
+                    {(order.paymentStatus === "paid" || (order.orderStatus === "delivered" && order.paymentMethod === "COD")) ? "ĐÃ THANH TOÁN" : "CHƯA THANH TOÁN"}
                   </span>
                 </div>
               </div>
