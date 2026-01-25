@@ -266,15 +266,17 @@ const SingleProduct = () => {
                   <strong>Chất liệu:</strong> {product.material}
                 </p>
               )}
-              {product.dimensions && (
+              {selectedVariant?.dimensions?.length && (
                 <p>
-                  <strong>Kích thước:</strong> {product.dimensions.length} x{' '}
-                  {product.dimensions.width} x {product.dimensions.height} cm
+                  <strong>Kích thước:</strong>{' '}
+                  {selectedVariant.dimensions.length} x{' '}
+                  {selectedVariant.dimensions.width} x{' '}
+                  {selectedVariant.dimensions.height} cm
                 </p>
               )}
-              {product.weight && (
+              {selectedVariant?.weight && (
                 <p>
-                  <strong>Trọng lượng:</strong> {product.weight} kg
+                  <strong>Trọng lượng:</strong> {selectedVariant.weight} kg
                 </p>
               )}
               <div className="flex gap-2 items-center">

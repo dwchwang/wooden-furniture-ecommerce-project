@@ -46,6 +46,24 @@ const productVariantSchema = new mongoose.Schema(
         message: "Cannot upload more than 5 images per variant",
       },
     },
+    dimensions: {
+      length: { 
+        type: Number, 
+        min: [0, "Length must be positive"] 
+      },
+      width: { 
+        type: Number, 
+        min: [0, "Width must be positive"] 
+      },
+      height: { 
+        type: Number, 
+        min: [0, "Height must be positive"] 
+      }
+    },
+    weight: {
+      type: Number,
+      min: [0, "Weight must be positive"]
+    },
     isActive: {
       type: Boolean,
       default: true,

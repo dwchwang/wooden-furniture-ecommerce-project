@@ -209,14 +209,16 @@ const AdminBlogsPage = () => {
                 {blogs.map((blog) => (
                   <tr key={blog._id} className="hover:bg-gray-50">
                     <td className="px-6 py-4">
-                      <div className="flex items-center gap-3">
-                        <img
-                          src={blog.coverImage}
-                          alt={blog.title}
-                          className="w-16 h-16 object-cover rounded-lg"
-                        />
-                        <div>
-                          <p className="font-medium text-gray-900 line-clamp-1">{blog.title}</p>
+                      <div className="flex items-center gap-4">
+                        <div className="flex-shrink-0 w-24 h-16 rounded-lg overflow-hidden bg-gray-100 border border-gray-200 shadow-sm">
+                          <img
+                            src={blog.coverImage}
+                            alt={blog.title}
+                            className="w-full h-full object-cover hover:scale-105 transition-transform duration-200"
+                          />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="font-medium text-gray-900 line-clamp-2 mb-1">{blog.title}</p>
                           <p className="text-sm text-gray-500 line-clamp-1">{blog.excerpt}</p>
                         </div>
                       </div>

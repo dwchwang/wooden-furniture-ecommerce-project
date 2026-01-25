@@ -16,13 +16,6 @@ const ProductFormPage = () => {
     category: '',
     type: '',
     material: '',
-    dimensions: {
-      length: '',
-      width: '',
-      height: '',
-      unit: 'cm'
-    },
-    weight: '',
     images: [],
     basePrice: '',
     isActive: true,
@@ -30,7 +23,10 @@ const ProductFormPage = () => {
   });
 
   const [variants, setVariants] = useState([
-    { color: '', size: '', price: '', stock: '', sku: '', images: [] }
+    {
+      color: '', size: '', price: '', stock: '', sku: '', images: [],
+      dimensions: { length: '', width: '', height: '' }, weight: ''
+    }
   ]);
 
   const [imagePreview, setImagePreview] = useState([]);
@@ -67,8 +63,6 @@ const ProductFormPage = () => {
         category: product.category?._id || '',
         type: product.type || '',
         material: product.material || '',
-        dimensions: product.dimensions || { length: '', width: '', height: '', unit: 'cm' },
-        weight: product.weight || '',
         images: product.images || [],
         basePrice: product.basePrice || '',
         isActive: product.isActive ?? true,
@@ -85,7 +79,9 @@ const ProductFormPage = () => {
           price: v.price || '',
           stock: v.stock || '',
           sku: v.sku || '',
-          images: v.images || []
+          images: v.images || [],
+          dimensions: v.dimensions || { length: '', width: '', height: '' },
+          weight: v.weight || ''
         })));
       }
     } catch (error) {
@@ -175,7 +171,10 @@ const ProductFormPage = () => {
   };
 
   const addVariant = () => {
-    setVariants([...variants, { color: '', size: '', price: '', stock: '', sku: '', images: [] }]);
+    setVariants([...variants, {
+      color: '', size: '', price: '', stock: '', sku: '', images: [],
+      dimensions: { length: '', width: '', height: '' }, weight: ''
+    }]);
   };
 
   const removeVariant = (index) => {
@@ -255,14 +254,7 @@ const ProductFormPage = () => {
     try {
       const productData = {
         ...formData,
-        basePrice: parseFloat(formData.basePrice),
-        weight: formData.weight ? parseFloat(formData.weight) : undefined,
-        dimensions: {
-          ...formData.dimensions,
-          length: formData.dimensions.length ? parseFloat(formData.dimensions.length) : undefined,
-          width: formData.dimensions.width ? parseFloat(formData.dimensions.width) : undefined,
-          height: formData.dimensions.height ? parseFloat(formData.dimensions.height) : undefined,
-        }
+        basePrice: parseFloat(formData.basePrice)
       };
 
       let productId;
@@ -280,6 +272,30 @@ const ProductFormPage = () => {
 
       // Create/Update variants
       const variantPromises = variants.map(async (variant) => {
+        // Parse dimensions - only include if at least one field has a value
+        let parsedDimensions = undefined;
+        if (variant.dimensions) {
+          const length = variant.dimensions.length && variant.dimensions.length.trim() !== ''
+            ? parseFloat(variant.dimensions.length)
+            : undefined;
+          const width = variant.dimensions.width && variant.dimensions.width.trim() !== ''
+            ? parseFloat(variant.dimensions.width)
+            : undefined;
+          const height = variant.dimensions.height && variant.dimensions.height.trim() !== ''
+            ? parseFloat(variant.dimensions.height)
+            : undefined;
+
+          // Only set dimensions if at least one value exists
+          if (length !== undefined || width !== undefined || height !== undefined) {
+            parsedDimensions = { length, width, height };
+          }
+        }
+
+        // Parse weight - only include if value is non-empty
+        const parsedWeight = variant.weight && variant.weight.toString().trim() !== ''
+          ? parseFloat(variant.weight)
+          : undefined;
+
         const variantData = {
           product: productId,
           color: variant.color,
@@ -287,7 +303,9 @@ const ProductFormPage = () => {
           price: parseFloat(variant.price),
           stock: parseInt(variant.stock) || 0,
           sku: variant.sku || undefined,
-          images: variant.images || []
+          images: variant.images || [],
+          dimensions: parsedDimensions,
+          weight: parsedWeight
         };
 
         if (variant._id) {
@@ -411,60 +429,7 @@ const ProductFormPage = () => {
           </div>
         </div>
 
-        {/* Dimensions */}
-        <div className="bg-white rounded-xl shadow-md p-6">
-          <h2 className="text-lg font-bold text-gray-900 mb-4">Kích thước & Trọng lượng</h2>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Dài (cm)</label>
-              <input
-                type="number"
-                name="dimensions.length"
-                value={formData.dimensions.length}
-                onChange={handleInputChange}
-                min="0"
-                step="0.1"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#a67c52] focus:border-transparent"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Rộng (cm)</label>
-              <input
-                type="number"
-                name="dimensions.width"
-                value={formData.dimensions.width}
-                onChange={handleInputChange}
-                min="0"
-                step="0.1"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#a67c52] focus:border-transparent"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Cao (cm)</label>
-              <input
-                type="number"
-                name="dimensions.height"
-                value={formData.dimensions.height}
-                onChange={handleInputChange}
-                min="0"
-                step="0.1"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#a67c52] focus:border-transparent"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Cân nặng (kg)</label>
-              <input
-                type="number"
-                name="weight"
-                value={formData.weight}
-                onChange={handleInputChange}
-                min="0"
-                step="0.1"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#a67c52] focus:border-transparent"
-              />
-            </div>
-          </div>
-        </div>
+
 
         {/* Images */}
         <div className="bg-white rounded-xl shadow-md p-6">
@@ -585,6 +550,61 @@ const ProductFormPage = () => {
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#a67c52] focus:border-transparent"
                       placeholder="Auto-generate"
                     />
+                  </div>
+                </div>
+
+                {/* Dimensions & Weight for this variant */}
+                <div className="mt-4">
+                  <h4 className="text-sm font-semibold text-gray-700 mb-3">Kích thước & Trọng lượng</h4>
+                  <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Dài (cm)</label>
+                      <input
+                        type="number"
+                        value={variant.dimensions?.length || ''}
+                        onChange={(e) => handleVariantChange(index, 'dimensions', { ...variant.dimensions, length: e.target.value })}
+                        min="0"
+                        step="0.1"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#a67c52] focus:border-transparent"
+                        placeholder="180"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Rộng (cm)</label>
+                      <input
+                        type="number"
+                        value={variant.dimensions?.width || ''}
+                        onChange={(e) => handleVariantChange(index, 'dimensions', { ...variant.dimensions, width: e.target.value })}
+                        min="0"
+                        step="0.1"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#a67c52] focus:border-transparent"
+                        placeholder="80"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Cao (cm)</label>
+                      <input
+                        type="number"
+                        value={variant.dimensions?.height || ''}
+                        onChange={(e) => handleVariantChange(index, 'dimensions', { ...variant.dimensions, height: e.target.value })}
+                        min="0"
+                        step="0.1"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#a67c52] focus:border-transparent"
+                        placeholder="75"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Cân nặng (kg)</label>
+                      <input
+                        type="number"
+                        value={variant.weight || ''}
+                        onChange={(e) => handleVariantChange(index, 'weight', e.target.value)}
+                        min="0"
+                        step="0.1"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#a67c52] focus:border-transparent"
+                        placeholder="45"
+                      />
+                    </div>
                   </div>
                 </div>
 

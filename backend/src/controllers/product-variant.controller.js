@@ -8,7 +8,7 @@ import { validateRequiredFields } from "../validations/common.validation.js";
 // Create new variant for a product
 const createVariant = asyncHandler(async (req, res) => {
   const { productId } = req.params;
-  const { sku, color, size, price, stock, images } = req.body;
+  const { sku, color, size, price, stock, images, dimensions, weight } = req.body;
 
   // Validate required fields
   validateRequiredFields(["price"], req.body);
@@ -36,6 +36,8 @@ const createVariant = asyncHandler(async (req, res) => {
     price,
     stock: stock || 0,
     images: images || [],
+    dimensions,
+    weight
   });
 
   return res
@@ -89,7 +91,7 @@ const getVariantById = asyncHandler(async (req, res) => {
 // Update variant
 const updateVariant = asyncHandler(async (req, res) => {
   const { variantId } = req.params;
-  const { sku, color, size, price, stock, images, isActive } = req.body;
+  const { sku, color, size, price, stock, images, isActive, dimensions, weight } = req.body;
 
   const variant = await ProductVariant.findById(variantId);
   if (!variant) {
@@ -111,6 +113,8 @@ const updateVariant = asyncHandler(async (req, res) => {
   if (stock !== undefined) variant.stock = stock;
   if (images !== undefined) variant.images = images;
   if (isActive !== undefined) variant.isActive = isActive;
+  if (dimensions !== undefined) variant.dimensions = dimensions;
+  if (weight !== undefined) variant.weight = weight;
 
   await variant.save();
 
